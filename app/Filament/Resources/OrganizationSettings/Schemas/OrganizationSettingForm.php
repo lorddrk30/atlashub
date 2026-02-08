@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\OrganizationSettings\Schemas;
 
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -32,14 +33,20 @@ class OrganizationSettingForm
                     ->label('Descripcion')
                     ->rows(3)
                     ->columnSpanFull(),
-                TextInput::make('logo_url')
-                    ->label('URL de logo')
-                    ->url()
-                    ->maxLength(255),
-                TextInput::make('favicon_url')
-                    ->label('URL de favicon')
-                    ->url()
-                    ->maxLength(255),
+                FileUpload::make('logo')
+                    ->label('Logo')
+                    ->image()
+                    ->disk('public')
+                    ->directory('branding')
+                    ->visibility('public')
+                    ->maxSize(5120),
+                FileUpload::make('favicon')
+                    ->label('Favicon')
+                    ->image()
+                    ->disk('public')
+                    ->directory('branding')
+                    ->visibility('public')
+                    ->maxSize(5120),
                 TextInput::make('support_email')
                     ->label('Correo de soporte')
                     ->email()

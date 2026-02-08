@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Models\OrganizationSetting;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
 
 class OrganizationContext
@@ -39,8 +40,8 @@ class OrganizationContext
             'slug' => $setting->slug ?: $defaults['slug'],
             'tagline' => $setting->tagline ?: $defaults['tagline'],
             'description' => $setting->description ?: $defaults['description'],
-            'logo_url' => $setting->logo_url ?: $defaults['logo_url'],
-            'favicon_url' => $setting->favicon_url ?: $defaults['favicon_url'],
+            'logo_url' => $setting->logo ? Storage::disk('public')->url($setting->logo) : $defaults['logo_url'],
+            'favicon_url' => $setting->favicon ? Storage::disk('public')->url($setting->favicon) : $defaults['favicon_url'],
             'support_email' => $setting->support_email ?: $defaults['support_email'],
             'primary_color' => $setting->primary_color ?: $defaults['primary_color'],
             'secondary_color' => $setting->secondary_color ?: $defaults['secondary_color'],
@@ -73,7 +74,7 @@ class OrganizationContext
             return null;
         }
 
-        return new HtmlString('<img src="'.e($logoUrl).'" alt="Logo organizacion" style="height: 2rem; width: auto;" />');
+        return new HtmlString('<img src="'.e($logoUrl).'" alt="'.e(static::config()['name']).'" style="height: 3rem; max-height: 60px; width: auto; max-width: 100%; object-fit: contain;" />');
     }
 }
 
