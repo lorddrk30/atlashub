@@ -13,6 +13,15 @@ Campos:
 - `name` (unique)
 - `slug` (unique)
 - `description` (nullable)
+- `prod_server` (nullable)
+- `uat_server` (nullable)
+- `dev_server` (nullable)
+- `internal_url` (nullable)
+- `public_url` (nullable)
+- `responsibles` (json nullable)
+- `user_areas` (json nullable)
+- `gitlab_url` (nullable)
+- `home_preview_url` (nullable)
 - `timestamps`
 
 Relaciones:

@@ -11,7 +11,28 @@ class System extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'description'];
+    protected $fillable = [
+        'name',
+        'slug',
+        'description',
+        'prod_server',
+        'uat_server',
+        'dev_server',
+        'internal_url',
+        'public_url',
+        'responsibles',
+        'user_areas',
+        'gitlab_url',
+        'home_preview_url',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'responsibles' => 'array',
+            'user_areas' => 'array',
+        ];
+    }
 
     public function modules(): HasMany
     {

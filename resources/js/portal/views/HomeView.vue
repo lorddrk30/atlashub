@@ -95,8 +95,23 @@
           <div class="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-cyan-300/10 blur-2xl transition group-hover:bg-cyan-300/25" />
           <template v-if="section.key === 'systems'">
             <p class="text-[11px] uppercase tracking-[0.22em] text-cyan-200/75">Sistema</p>
+            <img
+              v-if="item.home_preview_url"
+              :src="item.home_preview_url"
+              :alt="`Preview ${item.name}`"
+              class="mt-3 h-28 w-full rounded-2xl border border-white/15 object-cover"
+            >
             <h3 class="mt-2 text-xl font-semibold text-white">{{ item.name }}</h3>
             <p class="mt-3 text-sm text-slate-300">{{ shortText(item.description) }}</p>
+            <p class="mt-2 text-xs text-slate-400">PROD: {{ item.prod_server || '-' }}</p>
+            <p class="mt-1 text-xs text-slate-400">DEV: {{ item.dev_server || '-' }}</p>
+            <p class="mt-1 text-xs text-slate-400">Responsables: {{ joinTags(item.responsibles) }}</p>
+            <p class="mt-1 text-xs text-slate-400">Areas usuarias: {{ joinTags(item.user_areas) }}</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <button v-if="item.internal_url" class="rounded-lg border border-white/20 bg-white/[0.05] px-2.5 py-1 text-[11px] text-slate-200 transition hover:border-cyan-300/50" @click="openUrl(item.internal_url)">Dominio interno</button>
+              <button v-if="item.public_url" class="rounded-lg border border-white/20 bg-white/[0.05] px-2.5 py-1 text-[11px] text-slate-200 transition hover:border-cyan-300/50" @click="openUrl(item.public_url)">Dominio publico</button>
+              <button v-if="item.gitlab_url" class="rounded-lg border border-white/20 bg-white/[0.05] px-2.5 py-1 text-[11px] text-slate-200 transition hover:border-cyan-300/50" @click="openUrl(item.gitlab_url)">GitLab</button>
+            </div>
           </template>
 
           <template v-else-if="section.key === 'modules'">
@@ -194,6 +209,14 @@ const shortText = (value, limit = 96) => {
   }
 
   return `${text.slice(0, limit).trim()}...`;
+};
+
+const joinTags = (values) => {
+  if (!Array.isArray(values) || values.length === 0) {
+    return '-';
+  }
+
+  return values.join(', ');
 };
 
 const onShortcut = (event) => {

@@ -104,3 +104,22 @@ it('renders endpoint detail page when endpoint has nested json fields', function
 
     $response->assertSuccessful();
 });
+
+it('renders systems create and detail pages with operational metadata fields', function (): void {
+    $role = Role::query()->create(['name' => 'admin', 'guard_name' => 'web']);
+    $permission = Permission::query()->create(['name' => 'system.manage', 'guard_name' => 'web']);
+    $role->givePermissionTo($permission);
+
+    $user = User::factory()->create();
+    $user->assignRole($role);
+
+    $system = System::factory()->create([
+        'responsibles' => ['Equipo Plataforma'],
+        'user_areas' => ['Operacion'],
+        'home_preview_url' => 'https://placehold.co/1200x720/0b1220/22d3ee?text=Preview',
+    ]);
+
+    $this->actingAs($user)->get('/admin/systems')->assertSuccessful();
+    $this->actingAs($user)->get('/admin/systems/create')->assertSuccessful();
+    $this->actingAs($user)->get("/admin/systems/{$system->id}")->assertSuccessful();
+});

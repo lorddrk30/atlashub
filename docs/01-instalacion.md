@@ -13,8 +13,9 @@
 4. Ejecutar `npm install`.
 5. Ejecutar `php artisan key:generate`.
 6. Ejecutar `php artisan migrate --seed`.
-7. Ejecutar `php artisan serve`.
-8. Ejecutar `npm run dev`.
+7. Ejecutar `php artisan storage:link` (requerido para visualizar imagenes subidas desde backoffice).
+8. Ejecutar `php artisan serve`.
+9. Ejecutar `npm run dev`.
 
 ## Credenciales demo
 - `admin@rikarcoffe.local` / `password`

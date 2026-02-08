@@ -11,7 +11,18 @@ uses(RefreshDatabase::class);
 
 it('returns grouped catalog results', function (): void {
     $user = User::factory()->create();
-    $system = System::factory()->create(['name' => 'Coffee Experience', 'slug' => 'coffee-experience']);
+    $system = System::factory()->create([
+        'name' => 'Coffee Experience',
+        'slug' => 'coffee-experience',
+        'prod_server' => 'prod-coffee-api-01.internal.local',
+        'dev_server' => 'dev-coffee-api-01.internal.local',
+        'internal_url' => 'https://coffee.internal.local',
+        'public_url' => 'https://coffee.example.com',
+        'responsibles' => ['Equipo CX', 'Arquitectura'],
+        'user_areas' => ['Operacion', 'Comercial'],
+        'gitlab_url' => 'https://gitlab.internal.local/cx/coffee-experience',
+        'home_preview_url' => 'https://placehold.co/1200x720/0b1220/22d3ee?text=Coffee+Home',
+    ]);
     $module = Module::factory()->create([
         'system_id' => $system->id,
         'name' => 'Coffee Menu Catalog',
@@ -48,8 +59,28 @@ it('returns grouped catalog results', function (): void {
         ->assertJsonPath('counts.modules', 1)
         ->assertJsonPath('counts.endpoints', 1)
         ->assertJsonPath('counts.artefacts', 1)
+        ->assertJsonPath('grouped.systems.0.prod_server', 'prod-coffee-api-01.internal.local')
+        ->assertJsonPath('grouped.systems.0.gitlab_url', 'https://gitlab.internal.local/cx/coffee-experience')
         ->assertJsonPath('grouped.endpoints.0.public_id', $endpoint->public_id)
         ->assertJsonPath('grouped.endpoints.0.path', '/api/v1/menu/items');
+});
+
+it('searches systems by infrastructure metadata', function (): void {
+    System::factory()->create([
+        'name' => 'Payments',
+        'slug' => 'payments',
+        'description' => 'Core de pagos',
+        'gitlab_url' => 'https://gitlab.internal.local/core/payments',
+        'home_preview_url' => 'systems/previews/payments-home.png',
+    ]);
+
+    $response = $this->getJson('/api/v1/search?q=gitlab.internal.local/core/payments');
+
+    $response
+        ->assertOk()
+        ->assertJsonPath('counts.systems', 1)
+        ->assertJsonPath('grouped.systems.0.slug', 'payments')
+        ->assertJsonPath('grouped.systems.0.home_preview_url', 'http://127.0.0.1:8000/storage/systems/previews/payments-home.png');
 });
 
 it('returns endpoint detail by public id', function (): void {

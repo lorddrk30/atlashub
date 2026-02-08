@@ -15,6 +15,21 @@ class SystemFactory extends Factory
             'name' => Str::title($name),
             'slug' => Str::slug($name),
             'description' => fake()->sentence(),
+            'prod_server' => fake()->optional()->domainName(),
+            'uat_server' => fake()->optional()->domainName(),
+            'dev_server' => fake()->optional()->domainName(),
+            'internal_url' => fake()->optional()->url(),
+            'public_url' => fake()->optional()->url(),
+            'responsibles' => fake()->optional()->randomElements(
+                ['Plataforma', 'Arquitectura', 'DevOps', 'Backend Squad', 'Frontend Squad'],
+                rand(1, 3)
+            ),
+            'user_areas' => fake()->optional()->randomElements(
+                ['Operaciones', 'Comercial', 'Atencion a cliente', 'Finanzas', 'Producto'],
+                rand(1, 3)
+            ),
+            'gitlab_url' => fake()->optional()->url(),
+            'home_preview_url' => fake()->optional()->imageUrl(1280, 720, 'business'),
         ];
     }
 }

@@ -8,12 +8,28 @@ use App\Models\Endpoint;
 use App\Models\Module;
 use App\Models\System;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class CatalogSearchRepository
 {
     public function searchSystems(SearchFiltersData $filters): Collection
     {
-        $query = System::query()->select(['id', 'name', 'slug', 'description']);
+        $query = System::query()->select([
+            'id',
+            'name',
+            'slug',
+            'description',
+            'prod_server',
+            'uat_server',
+            'dev_server',
+            'internal_url',
+            'public_url',
+            'responsibles',
+            'user_areas',
+            'gitlab_url',
+            'home_preview_url',
+        ]);
 
         if ($filters->systemId) {
             $query->where('id', $filters->systemId);
@@ -25,11 +41,27 @@ class CatalogSearchRepository
                 $subQuery
                     ->whereRaw('LOWER(name) LIKE ?', ["%{$needle}%"])
                     ->orWhereRaw('LOWER(slug) LIKE ?', ["%{$needle}%"])
-                    ->orWhereRaw('LOWER(description) LIKE ?', ["%{$needle}%"]);
+                    ->orWhereRaw('LOWER(description) LIKE ?', ["%{$needle}%"])
+                    ->orWhereRaw('LOWER(prod_server) LIKE ?', ["%{$needle}%"])
+                    ->orWhereRaw('LOWER(uat_server) LIKE ?', ["%{$needle}%"])
+                    ->orWhereRaw('LOWER(dev_server) LIKE ?', ["%{$needle}%"])
+                    ->orWhereRaw('LOWER(internal_url) LIKE ?', ["%{$needle}%"])
+                    ->orWhereRaw('LOWER(public_url) LIKE ?', ["%{$needle}%"])
+                    ->orWhereRaw('LOWER(gitlab_url) LIKE ?', ["%{$needle}%"])
+                    ->orWhereRaw('LOWER(CAST(responsibles AS TEXT)) LIKE ?', ["%{$needle}%"])
+                    ->orWhereRaw('LOWER(CAST(user_areas AS TEXT)) LIKE ?', ["%{$needle}%"]);
             });
         }
 
-        return $query->orderBy('name')->limit($filters->perCategory)->get();
+        return $query
+            ->orderBy('name')
+            ->limit($filters->perCategory)
+            ->get()
+            ->map(function (System $system): System {
+                $system->home_preview_url = $this->resolveImageUrl($system->home_preview_url);
+
+                return $system;
+            });
     }
 
     public function searchModules(SearchFiltersData $filters): Collection
@@ -214,5 +246,18 @@ class CatalogSearchRepository
             'authentication_types' => Endpoint::AUTH_TYPES,
             'artefact_types' => Artefact::TYPES,
         ];
+    }
+
+    private function resolveImageUrl(?string $path): ?string
+    {
+        if (! filled($path)) {
+            return null;
+        }
+
+        if (Str::startsWith($path, ['http://', 'https://', '//'])) {
+            return $path;
+        }
+
+        return Storage::disk('public')->url($path);
     }
 }

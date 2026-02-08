@@ -89,19 +89,55 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        $customerExperience = System::query()->firstOrCreate(
+        $customerExperience = System::query()->updateOrCreate(
             ['slug' => 'customer-experience'],
-            ['name' => 'Customer Experience', 'description' => 'Pedidos web, app y kioskos de RikarCoffe.']
+            [
+                'name' => 'Customer Experience',
+                'description' => 'Pedidos web, app y kioskos de RikarCoffe.',
+                'prod_server' => 'prod-cx-api-01.rikarcoffe.local',
+                'uat_server' => 'uat-cx-api-01.rikarcoffe.local',
+                'dev_server' => 'dev-cx-api-01.rikarcoffe.local',
+                'internal_url' => 'https://cx.rikarcoffe.local',
+                'public_url' => 'https://app.rikarcoffe.com',
+                'responsibles' => ['Equipo Plataforma API', 'Lider CX Digital'],
+                'user_areas' => ['Operacion en tienda', 'Experiencia cliente'],
+                'gitlab_url' => 'https://gitlab.rikarcoffe.local/cx/customer-experience',
+                'home_preview_url' => 'https://placehold.co/1200x720/0b1220/22d3ee?text=RikarCoffe+CX+Home',
+            ]
         );
 
-        $storeOperations = System::query()->firstOrCreate(
+        $storeOperations = System::query()->updateOrCreate(
             ['slug' => 'store-operations'],
-            ['name' => 'Store Operations', 'description' => 'Operacion diaria en sucursales y turnos de baristas.']
+            [
+                'name' => 'Store Operations',
+                'description' => 'Operacion diaria en sucursales y turnos de baristas.',
+                'prod_server' => 'prod-ops-api-01.rikarcoffe.local',
+                'uat_server' => 'uat-ops-api-01.rikarcoffe.local',
+                'dev_server' => 'dev-ops-api-01.rikarcoffe.local',
+                'internal_url' => 'https://ops.rikarcoffe.local',
+                'public_url' => null,
+                'responsibles' => ['Equipo Operaciones Digitales'],
+                'user_areas' => ['Sucursales', 'Recursos humanos'],
+                'gitlab_url' => 'https://gitlab.rikarcoffe.local/ops/store-operations',
+                'home_preview_url' => 'https://placehold.co/1200x720/111827/34d399?text=RikarCoffe+Ops+Home',
+            ]
         );
 
-        $supplyChain = System::query()->firstOrCreate(
+        $supplyChain = System::query()->updateOrCreate(
             ['slug' => 'supply-chain'],
-            ['name' => 'Supply Chain', 'description' => 'Compras, proveedores e inventario de insumos.']
+            [
+                'name' => 'Supply Chain',
+                'description' => 'Compras, proveedores e inventario de insumos.',
+                'prod_server' => 'prod-supply-api-01.rikarcoffe.local',
+                'uat_server' => 'uat-supply-api-01.rikarcoffe.local',
+                'dev_server' => 'dev-supply-api-01.rikarcoffe.local',
+                'internal_url' => 'https://supply.rikarcoffe.local',
+                'public_url' => null,
+                'responsibles' => ['Equipo Supply Tech', 'Lider Compras'],
+                'user_areas' => ['Compras', 'Inventario'],
+                'gitlab_url' => 'https://gitlab.rikarcoffe.local/supply/supply-chain',
+                'home_preview_url' => 'https://placehold.co/1200x720/0f172a/a5f3fc?text=RikarCoffe+Supply+Home',
+            ]
         );
 
         $ordersModule = Module::query()->firstOrCreate(

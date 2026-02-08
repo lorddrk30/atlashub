@@ -36,6 +36,15 @@
 - `Reportes` (pagina de backoffice en `/admin/reports` con acceso al dashboard analitico `/reports`)
 - `Logs` (pagina de backoffice en `/admin/logs` con visor avanzado embebido)
 
+### Datos operativos de Systems
+`Systems` ahora incluye metadatos para inventario tecnico:
+- Servidores por ambiente: `prod_server`, `uat_server`, `dev_server`.
+- Dominios: `internal_url` y `public_url`.
+- Responsables del sistema (lista).
+- Areas usuarias (lista).
+- URL del repositorio en GitLab.
+- Captura/preview del home del sistema (upload de imagen desde Filament).
+
 ## UX de reportes en backoffice
 - La pagina `/admin/reports` usa un layout visual propio (hero + KPIs + vista integrada) para no mostrar una pantalla tecnica plana.
 - Incluye atajos a abrir el dashboard en la misma pagina o en pestana nueva.

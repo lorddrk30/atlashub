@@ -34,6 +34,10 @@ Busca en catalogo y devuelve resultados agrupados.
 }
 ```
 
+Notas para `grouped.systems[*]`:
+- Incluye metadatos operativos: `prod_server`, `uat_server`, `dev_server`, `internal_url`, `public_url`, `responsibles`, `user_areas`, `gitlab_url`, `home_preview_url`.
+- El texto libre `q` tambien hace match contra esos campos para discovery tecnico mas rapido.
+
 ## GET /endpoints/{public_id}
 Devuelve detalle de un endpoint publicado.
 
