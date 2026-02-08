@@ -7,9 +7,9 @@ use App\Http\Controllers\Controller;
 
 class EndpointController extends Controller
 {
-    public function show(int $id, GetEndpointDetailAction $action)
+    public function show(string $publicId, GetEndpointDetailAction $action)
     {
-        $endpoint = $action->execute($id);
+        $endpoint = $action->execute($publicId);
 
         abort_unless($endpoint && $endpoint->status === 'published', 404, 'Endpoint no encontrado.');
 

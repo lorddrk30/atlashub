@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Endpoint extends Model
 {
@@ -18,6 +19,7 @@ class Endpoint extends Model
     public const STATUSES = ['draft', 'published', 'archived'];
 
     protected $fillable = [
+        'public_id',
         'module_id',
         'name',
         'method',
@@ -41,6 +43,15 @@ class Endpoint extends Model
             'response_example' => 'array',
             'urls' => 'array',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $endpoint): void {
+            if (! filled($endpoint->public_id)) {
+                $endpoint->public_id = (string) Str::ulid();
+            }
+        });
     }
 
     public function module(): BelongsTo

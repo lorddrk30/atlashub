@@ -89,7 +89,7 @@
       <div v-if="section.items.length > 0" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <article
           v-for="item in section.items"
-          :key="section.key + '-' + item.id"
+          :key="section.key + '-' + (item.public_id || item.id)"
           class="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] p-5 shadow-xl shadow-slate-950/40 backdrop-blur-xl transition duration-300 hover:-translate-y-1.5 hover:border-cyan-300/35 hover:bg-cyan-300/[0.08]"
         >
           <div class="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-cyan-300/10 blur-2xl transition group-hover:bg-cyan-300/25" />
@@ -111,7 +111,7 @@
             <h3 class="mt-2 text-lg font-semibold text-white">{{ item.name }}</h3>
             <p class="mt-3 text-sm text-slate-300"><span class="rounded-full border border-cyan-300/30 bg-cyan-300/10 px-2 py-0.5 text-[11px] font-semibold text-cyan-100">{{ item.method }}</span></p>
             <p class="mt-2 text-sm text-slate-300">{{ shortText(item.path, 62) }}</p>
-            <button class="mt-4 rounded-xl border border-white/20 bg-white/[0.05] px-3 py-2 text-xs text-white transition hover:border-cyan-300/50 hover:bg-cyan-300/15" @click="goToEndpoint(item.id)">Abrir mini swagger</button>
+            <button class="mt-4 rounded-xl border border-white/20 bg-white/[0.05] px-3 py-2 text-xs text-white transition hover:border-cyan-300/50 hover:bg-cyan-300/15" @click="goToEndpoint(item.public_id)">Abrir mini swagger</button>
           </template>
 
           <template v-else>
@@ -203,8 +203,12 @@ const onShortcut = (event) => {
   }
 };
 
-const goToEndpoint = (endpointId) => {
-  router.push({ name: 'endpoint-detail', params: { id: endpointId }, query: route.query });
+const goToEndpoint = (publicId) => {
+  if (!publicId) {
+    return;
+  }
+
+  router.push({ name: 'endpoint-detail', params: { publicId }, query: route.query });
 };
 
 const openUrl = (url) => {

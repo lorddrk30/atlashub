@@ -163,7 +163,7 @@ const loadEndpoint = async () => {
   loading.value = true;
 
   try {
-    const response = await fetch(`/api/v1/endpoints/${route.params.id}`);
+    const response = await fetch(`/api/v1/endpoints/${route.params.publicId}`);
 
     if (!response.ok) {
       endpoint.value = null;

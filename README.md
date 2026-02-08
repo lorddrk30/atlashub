@@ -41,7 +41,7 @@ AtlasHub inicio como un proyecto personal de vibecoding, creado como alternativa
 
 ## API v1 (Portal)
 - `GET /api/v1/search`
-- `GET /api/v1/endpoints/{id}`
+- `GET /api/v1/endpoints/{public_id}`
 - `GET /api/v1/filters`
 
 ## Admin

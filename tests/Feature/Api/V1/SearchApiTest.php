@@ -48,10 +48,11 @@ it('returns grouped catalog results', function (): void {
         ->assertJsonPath('counts.modules', 1)
         ->assertJsonPath('counts.endpoints', 1)
         ->assertJsonPath('counts.artefacts', 1)
+        ->assertJsonPath('grouped.endpoints.0.public_id', $endpoint->public_id)
         ->assertJsonPath('grouped.endpoints.0.path', '/api/v1/menu/items');
 });
 
-it('returns endpoint detail by id', function (): void {
+it('returns endpoint detail by public id', function (): void {
     $system = System::factory()->create(['name' => 'Store Operations', 'slug' => 'store-operations']);
     $module = Module::factory()->create(['system_id' => $system->id]);
 
@@ -62,11 +63,11 @@ it('returns endpoint detail by id', function (): void {
         'path' => '/api/v1/shifts/{shift_id}',
     ]);
 
-    $response = $this->getJson('/api/v1/endpoints/'.$endpoint->id);
+    $response = $this->getJson('/api/v1/endpoints/'.$endpoint->public_id);
 
     $response
         ->assertOk()
-        ->assertJsonPath('item.id', $endpoint->id)
+        ->assertJsonPath('item.public_id', $endpoint->public_id)
         ->assertJsonPath('item.path', '/api/v1/shifts/{shift_id}')
         ->assertJsonPath('item.module.system.id', $system->id);
 });
@@ -80,7 +81,7 @@ it('returns 404 for unpublished endpoint detail', function (): void {
         'status' => 'draft',
     ]);
 
-    $this->getJson('/api/v1/endpoints/'.$endpoint->id)
+    $this->getJson('/api/v1/endpoints/'.$endpoint->public_id)
         ->assertNotFound();
 });
 

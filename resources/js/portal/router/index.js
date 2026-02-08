@@ -6,7 +6,7 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: '/', name: 'home', component: HomeView },
-    { path: '/endpoints/:id', name: 'endpoint-detail', component: EndpointDetailView, props: true },
+    { path: '/endpoints/:publicId', name: 'endpoint-detail', component: EndpointDetailView, props: true },
   ],
   scrollBehavior() {
     return { top: 0 };

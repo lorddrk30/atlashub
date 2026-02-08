@@ -34,17 +34,18 @@ Busca en catalogo y devuelve resultados agrupados.
 }
 ```
 
-## GET /endpoints/{id}
+## GET /endpoints/{public_id}
 Devuelve detalle de un endpoint publicado.
 
 ### Path params
-- `id` (int, requerido)
+- `public_id` (string ULID, requerido)
 
 ### Response (200)
 ```json
 {
   "item": {
     "id": 10,
+    "public_id": "01JMM5AN7WKS0M6AXR7H2JBN36",
     "module_id": 3,
     "name": "List menu items",
     "method": "GET",

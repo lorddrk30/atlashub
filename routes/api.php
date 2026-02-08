@@ -7,6 +7,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
     Route::get('/search', SearchController::class);
-    Route::get('/endpoints/{id}', [EndpointController::class, 'show'])->whereNumber('id');
+    Route::get('/endpoints/{publicId}', [EndpointController::class, 'show'])->whereUlid('publicId');
     Route::get('/filters', FilterController::class);
 });

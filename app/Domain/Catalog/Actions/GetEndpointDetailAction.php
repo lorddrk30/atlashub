@@ -11,8 +11,8 @@ class GetEndpointDetailAction
     {
     }
 
-    public function execute(int $endpointId): ?Endpoint
+    public function execute(string $publicId): ?Endpoint
     {
-        return $this->repository->findEndpointById($endpointId);
+        return $this->repository->findEndpointByPublicId($publicId);
     }
 }

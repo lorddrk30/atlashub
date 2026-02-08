@@ -10,7 +10,7 @@ Implementar el catalogo base `Sistema -> Modulo -> Endpoint` con API v1 y RBAC.
 - Policies por entidad.
 - Endpoints API:
   - `GET /api/v1/search`
-  - `GET /api/v1/endpoints/{id}`
+  - `GET /api/v1/endpoints/{public_id}`
   - `GET /api/v1/filters`
 - Tests basicos de API.
 

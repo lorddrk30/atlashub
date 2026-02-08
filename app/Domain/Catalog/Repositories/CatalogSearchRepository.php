@@ -69,7 +69,7 @@ class CatalogSearchRepository
     {
         $query = Endpoint::query()
             ->select([
-                'id',
+                'public_id',
                 'module_id',
                 'name',
                 'method',
@@ -141,7 +141,7 @@ class CatalogSearchRepository
                 'description',
                 'updated_at',
             ])
-            ->with(['system:id,name,slug', 'module:id,name,slug', 'endpoint:id,name,method,path']);
+            ->with(['system:id,name,slug', 'module:id,name,slug', 'endpoint:id,public_id,name,method,path']);
 
         if ($filters->artefactType) {
             $query->where('type', $filters->artefactType);
@@ -197,11 +197,12 @@ class CatalogSearchRepository
             ->get();
     }
 
-    public function findEndpointById(int $endpointId): ?Endpoint
+    public function findEndpointByPublicId(string $publicId): ?Endpoint
     {
         return Endpoint::query()
             ->with(['module:id,system_id,name,slug,description', 'module.system:id,name,slug,description', 'artefacts'])
-            ->find($endpointId);
+            ->where('public_id', $publicId)
+            ->first();
     }
 
     public function filterData(): array

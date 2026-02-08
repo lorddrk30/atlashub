@@ -36,10 +36,14 @@ AtlasHub usa una arquitectura por capas con foco en el catalogo tecnico:
 5. Se devuelve respuesta agrupada y contadores por categoria.
 
 ## Flujo de detalle endpoint
-1. `GET /api/v1/endpoints/{id}`
+1. `GET /api/v1/endpoints/{public_id}`
 2. `GetEndpointDetailAction` carga endpoint con relaciones (`module.system`, `artefacts`).
 3. Solo endpoints `published` son visibles en el portal.
 4. Frontend renderiza vista mini Swagger con acciones `Abrir`, `Copiar URL`, `Copiar cURL` y `Ver Swagger`.
+
+## Consideracion de seguridad en identificadores
+- El portal y la API publica no exponen IDs secuenciales para detalle de endpoints.
+- Se usa `public_id` (ULID) para reducir el riesgo de enumeracion simple de recursos.
 
 ## Busqueda hoy y fase 2
 - MVP: busqueda SQL (`LIKE`) con filtros y match en relaciones.

@@ -42,6 +42,7 @@ Relaciones:
 ## endpoints
 Campos:
 - `id`
+- `public_id` (ULID unico para exposicion publica)
 - `module_id` (FK -> modules)
 - `name`
 - `method` (`GET|POST|PUT|PATCH|DELETE`)
@@ -57,6 +58,7 @@ Campos:
 - `timestamps`
 
 Indices y constraints:
+- unique `public_id`
 - unique (`module_id`, `method`, `path`)
 - index (`module_id`, `status`)
 - index `method`
@@ -65,6 +67,10 @@ Indices y constraints:
 Relaciones:
 - `belongsTo module`
 - `hasMany artefacts`
+
+Nota de seguridad:
+- El `id` autoincremental queda interno.
+- Las rutas publicas del portal/API usan `public_id` para mitigar enumeracion de recursos.
 
 ## artefacts
 Campos:
@@ -92,8 +98,8 @@ Campos:
 - `slug` (unique)
 - `tagline` (nullable)
 - `description` (nullable)
-- `logo_url` (nullable)
-- `favicon_url` (nullable)
+- `logo` (nullable, path en disco `public`)
+- `favicon` (nullable, path en disco `public`)
 - `support_email` (nullable)
 - `primary_color`
 - `secondary_color`

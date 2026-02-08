@@ -16,8 +16,8 @@ class OrganizationSettingInfolist
                 TextEntry::make('slug')->label('Slug'),
                 TextEntry::make('tagline')->label('Tagline')->placeholder('-'),
                 TextEntry::make('description')->label('Descripcion')->placeholder('-'),
-                TextEntry::make('logo_url')->label('Logo URL')->placeholder('-'),
-                TextEntry::make('favicon_url')->label('Favicon URL')->placeholder('-'),
+                TextEntry::make('logo')->label('Logo')->placeholder('-'),
+                TextEntry::make('favicon')->label('Favicon')->placeholder('-'),
                 TextEntry::make('support_email')->label('Soporte')->placeholder('-'),
                 TextEntry::make('primary_color')->label('Color primario'),
                 TextEntry::make('secondary_color')->label('Color secundario'),
@@ -25,4 +25,3 @@ class OrganizationSettingInfolist
             ]);
     }
 }
-
