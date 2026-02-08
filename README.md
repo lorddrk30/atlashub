@@ -53,7 +53,9 @@ AtlasHub inicio como un proyecto personal de vibecoding, creado como alternativa
 - Login web general (Breeze/Inertia): `/login`
 - Recursos CRUD: `Systems`, `Modules`, `Endpoints`, `Artefacts`, `Users`, `Roles`, `Permissions`, `Organization Settings`
 - Reportes en sidebar: `/admin/reports` (dashboard + exportables)
+- Logs en sidebar: `/admin/logs` (visor visual de logs con filtros y stacktrace)
 - Publicacion de endpoints controlada por permiso `endpoint.publish`
+- Permisos de logs: `logs.view` (ver/descargar) y `logs.manage` (eliminar)
 - Tema visual del panel: `resources/css/filament/admin/theme.css`
 
 ## Reinicio rapido de entorno

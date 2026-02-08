@@ -32,6 +32,30 @@ it('shows reports page in filament for admin role', function (): void {
     $response->assertSuccessful();
 });
 
+it('shows logs page in filament when user has logs.view permission', function (): void {
+    $role = Role::query()->create(['name' => 'admin', 'guard_name' => 'web']);
+    $permission = Permission::query()->create(['name' => 'logs.view', 'guard_name' => 'web']);
+    $role->givePermissionTo($permission);
+
+    $user = User::factory()->create();
+    $user->assignRole($role);
+
+    $response = $this->actingAs($user)->get('/admin/logs');
+
+    $response->assertSuccessful();
+});
+
+it('denies log viewer route when user lacks logs.view permission', function (): void {
+    $role = Role::query()->create(['name' => 'admin', 'guard_name' => 'web']);
+
+    $user = User::factory()->create();
+    $user->assignRole($role);
+
+    $response = $this->actingAs($user)->get('/admin/log-viewer');
+
+    $response->assertForbidden();
+});
+
 it('denies viewer role to access filament panel', function (): void {
     $role = Role::query()->create(['name' => 'viewer', 'guard_name' => 'web']);
 

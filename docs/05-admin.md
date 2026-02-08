@@ -34,6 +34,19 @@
 - `Roles`
 - `Permissions`
 - `Reportes` (pagina de backoffice en `/admin/reports` con acceso al dashboard analitico `/reports`)
+- `Logs` (pagina de backoffice en `/admin/logs` con visor avanzado embebido)
+
+## UX de reportes en backoffice
+- La pagina `/admin/reports` usa un layout visual propio (hero + KPIs + vista integrada) para no mostrar una pantalla tecnica plana.
+- Incluye atajos a abrir el dashboard en la misma pagina o en pestana nueva.
+- Muestra conteos rapidos (`systems`, `modules`, `endpoints`, `artefacts`) para contexto inmediato.
+
+## UX de logs en backoffice
+- Ruta tecnica del visor: `/admin/log-viewer` (basado en `opcodesio/log-viewer`).
+- Ruta de entrada UX dentro de Filament: `/admin/logs` (hero + recomendaciones + iframe del visor).
+- Acciones soportadas segun permisos:
+  - Ver y descargar logs: `logs.view`
+  - Eliminar archivos/carpetas de log: `logs.manage`
 
 ## Reglas de permisos (RBAC)
 Permisos base sembrados en `DatabaseSeeder`:
@@ -45,10 +58,12 @@ Permisos base sembrados en `DatabaseSeeder`:
 - `organization.manage`
 - `user.manage`
 - `role.manage`
+- `logs.view`
+- `logs.manage`
 
 Roles:
 - `admin`: todos los permisos.
-- `editor`: sistemas/modulos/endpoints/artefactos + publicar endpoints (sin acceso a Organization Settings).
+- `editor`: sistemas/modulos/endpoints/artefactos + publicar endpoints + lectura de logs (sin acceso a Organization Settings).
 - `viewer`: sin permisos de administracion y sin acceso al panel.
 
 ## Personalizacion de marca

@@ -2,6 +2,10 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\Artefact;
+use App\Models\Endpoint;
+use App\Models\Module;
+use App\Models\System;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -19,6 +23,30 @@ class ReportsDashboard extends Page
     protected string $view = 'filament.pages.reports-dashboard';
 
     protected static ?string $slug = 'reports';
+
+    public array $stats = [];
+
+    public function mount(): void
+    {
+        $this->stats = [
+            [
+                'label' => 'Sistemas',
+                'value' => (string) System::query()->count(),
+            ],
+            [
+                'label' => 'Modulos',
+                'value' => (string) Module::query()->count(),
+            ],
+            [
+                'label' => 'Endpoints',
+                'value' => (string) Endpoint::query()->count(),
+            ],
+            [
+                'label' => 'Artefactos',
+                'value' => (string) Artefact::query()->count(),
+            ],
+        ];
+    }
 
     public static function canAccess(): bool
     {

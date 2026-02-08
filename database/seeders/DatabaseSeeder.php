@@ -32,6 +32,8 @@ class DatabaseSeeder extends Seeder
             'organization.manage',
             'user.manage',
             'role.manage',
+            'logs.view',
+            'logs.manage',
         ];
 
         foreach ($permissionNames as $permissionName) {
@@ -49,6 +51,7 @@ class DatabaseSeeder extends Seeder
             'endpoint.manage',
             'endpoint.publish',
             'artefact.manage',
+            'logs.view',
         ]);
         $viewerRole->syncPermissions([]);
 

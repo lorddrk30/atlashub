@@ -26,6 +26,11 @@ AtlasHub usa una arquitectura por capas con foco en el catalogo tecnico:
   - `OrganizationContext` para resolver branding dinamico (portal + backoffice).
 - `App/Filament`
   - backoffice CRUD para mantenimiento del catalogo.
+  - paginas operativas (`Reportes`, `Logs`) para observabilidad.
+- `config/log-viewer.php`
+  - configuracion de `opcodesio/log-viewer` para visor visual de logs.
+- `App/Providers/AppServiceProvider`
+  - gates de seguridad para logs (`viewLogViewer`, download y delete).
 - `resources/js/portal`
   - SPA Vue del portal interno con Pinia + Vue Router.
 
