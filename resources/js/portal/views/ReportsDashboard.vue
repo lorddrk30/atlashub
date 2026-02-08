@@ -92,19 +92,27 @@
     <section v-if="summary" class="grid gap-4 lg:grid-cols-2">
       <article class="rounded-2xl border border-white/10 bg-slate-950/55 p-4">
         <h3 class="display-title text-lg text-white">Endpoints por sistema</h3>
-        <canvas ref="endpointsBySystemCanvas" class="mt-3 h-64"></canvas>
+        <div class="relative mt-3 h-72 overflow-hidden rounded-xl border border-white/10 bg-slate-950/40 p-2">
+          <canvas ref="endpointsBySystemCanvas" class="!h-full !w-full"></canvas>
+        </div>
       </article>
       <article class="rounded-2xl border border-white/10 bg-slate-950/55 p-4">
         <h3 class="display-title text-lg text-white">Endpoints por modulo</h3>
-        <canvas ref="endpointsByModuleCanvas" class="mt-3 h-64"></canvas>
+        <div class="relative mt-3 h-72 overflow-hidden rounded-xl border border-white/10 bg-slate-950/40 p-2">
+          <canvas ref="endpointsByModuleCanvas" class="!h-full !w-full"></canvas>
+        </div>
       </article>
       <article class="rounded-2xl border border-white/10 bg-slate-950/55 p-4">
         <h3 class="display-title text-lg text-white">Artefactos por tipo</h3>
-        <canvas ref="artefactsByTypeCanvas" class="mt-3 h-64"></canvas>
+        <div class="relative mt-3 h-72 overflow-hidden rounded-xl border border-white/10 bg-slate-950/40 p-2">
+          <canvas ref="artefactsByTypeCanvas" class="!h-full !w-full"></canvas>
+        </div>
       </article>
       <article class="rounded-2xl border border-white/10 bg-slate-950/55 p-4">
         <h3 class="display-title text-lg text-white">Endpoints por metodo HTTP</h3>
-        <canvas ref="endpointsByMethodCanvas" class="mt-3 h-64"></canvas>
+        <div class="relative mt-3 h-72 overflow-hidden rounded-xl border border-white/10 bg-slate-950/40 p-2">
+          <canvas ref="endpointsByMethodCanvas" class="!h-full !w-full"></canvas>
+        </div>
       </article>
     </section>
 
@@ -228,6 +236,9 @@ const buildBarChart = (canvasRef, dataset, label, color) => {
     return null;
   }
 
+  const values = dataset.map((item) => Number(item.value || 0));
+  const maxValue = Math.max(...values, 0);
+
   return new Chart(canvasRef.value, {
     type: 'bar',
     data: {
@@ -235,13 +246,17 @@ const buildBarChart = (canvasRef, dataset, label, color) => {
       datasets: [
         {
           label,
-          data: dataset.map((item) => item.value),
+          data: values,
           backgroundColor: color,
           borderRadius: 8,
+          maxBarThickness: 44,
+          categoryPercentage: 0.72,
+          barPercentage: 0.88,
         },
       ],
     },
     options: {
+      responsive: true,
       maintainAspectRatio: false,
       plugins: {
         legend: {
@@ -250,11 +265,14 @@ const buildBarChart = (canvasRef, dataset, label, color) => {
       },
       scales: {
         x: {
+          offset: true,
           ticks: { color: '#cbd5e1' },
           grid: { color: 'rgba(148, 163, 184, 0.15)' },
         },
         y: {
           beginAtZero: true,
+          suggestedMax: maxValue > 0 ? maxValue + 1 : 1,
+          grace: '10%',
           ticks: { color: '#cbd5e1', precision: 0 },
           grid: { color: 'rgba(148, 163, 184, 0.15)' },
         },
@@ -414,4 +432,3 @@ const downloadCsv = () => {
 onMounted(loadSummary);
 onBeforeUnmount(destroyCharts);
 </script>
-
