@@ -1,98 +1,112 @@
 # AtlasHub
 
-AtlasHub es un portal interno tipo Backstage-lite para catalogar y descubrir APIs internas con una unidad principal clara:
+<div align="center">
+
+![License](https://img.shields.io/badge/license-MIT-yellow?style=for-the-badge)
+![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![Filament](https://img.shields.io/badge/Filament-5.x-F28D35?style=for-the-badge)
+![Vue.js](https://img.shields.io/badge/Vue.js-3.x-4FC08D?style=for-the-badge&logo=vue.js&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-4.x-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16+-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+
+</div>
+
+<p align="center">
+  <strong>Portal interno tipo Backstage-lite para catalogar y descubrir APIs internas.</strong>
+</p>
+
+---
+
+## 🚀 Sobre el Proyecto
+
+**AtlasHub** es una solución moderna para la gestión del conocimiento técnico de tu organización. Permite centralizar la documentación de APIs, artefactos y sistemas en una estructura jerárquica clara:
 
 `Sistema -> Modulo -> Endpoint`
 
-Incluye busqueda global agrupada por categorias (`sistemas`, `modulos`, `endpoints`, `artefactos`), detalle tipo mini Swagger y panel admin con Filament.
+### ✨ Características Principales
 
-Proyecto open source: contribuciones via issues y pull requests son bienvenidas.
+-   🔍 **Búsqueda Global Inteligente**: Encuentra sistemas, módulos, endpoints y artefactos al instante.
+-   📄 **Documentación Interactiva**: Detalle de endpoints tipo mini-Swagger.
+-   🛠️ **Panel de Administración**: Construido con **Filament 5** para una gestión robusta.
+-   📊 **Reportes y Logs**: Visualización de actividad y métricas del sistema.
+-   🔐 **Seguridad Granular**: Roles y permisos con Spatie Permission.
 
-## Origen
-AtlasHub inicio como un proyecto personal de vibecoding, creado como alternativa moderna a distintos gestores de proyectos y catalogos tecnicos tradicionales.
+## 🛠️ Stack Tecnológico
 
-## Autoria
-- Creador de la iniciativa abierta: **Erik Alan Alvarez** (Ingeniero de Software).
-- Comunidad: cualquier persona puede contribuir para mejorar su desarrollo y evolucion.
+Este proyecto utiliza las últimas tecnologías del ecosistema PHP y JavaScript:
 
-## Stack
-- Laravel 12
-- PostgreSQL
-- Laravel Sanctum
-- Spatie Permission + Activitylog
-- Filament 5
-- Vue 3 + Vite + TailwindCSS
-- Vue Router + Pinia + Headless UI
+-   **Backend**: Laravel 12, Laravel Sanctum, Spatie Permission/Activitylog.
+-   **Admin Panel**: Filament 5.
+-   **Frontend**: Vue 3, Inertia.js, TailwindCSS 4, Headless UI.
+-   **Base de Datos**: PostgreSQL.
+-   **Herramientas**: Vite, Pest PHP.
 
-## Inicio rapido
-1. Copiar `.env.example` a `.env`.
-2. Configurar PostgreSQL en `.env`.
-3. Ejecutar `composer install`.
-4. Ejecutar `npm install`.
-5. Ejecutar `php artisan key:generate`.
-6. Ejecutar `php artisan migrate --seed`.
-7. Ejecutar `php artisan serve`.
-8. Ejecutar `npm run dev`.
+## ⚡ Inicio Rápido
 
-## Credenciales demo
-- `admin@rikarcoffe.local` / `password`
-- `editor@rikarcoffe.local` / `password`
-- `viewer@rikarcoffe.local` / `password`
+Sigue estos pasos para levantar el entorno de desarrollo:
 
-## API v1 (Portal)
-- `GET /api/v1/search`
-- `GET /api/v1/endpoints/{public_id}`
-- `GET /api/v1/filters`
-- `GET /api/v1/reports/summary`
-- `POST /api/v1/reports/generate-pdf`
+1.  **Clonar y configurar entorno**:
+    ```bash
+    cp .env.example .env
+    # Configura tus credenciales de base de datos en .env
+    ```
 
-## Admin
-- URL: `/admin`
-- Login backoffice: `/admin/login`
-- Entrada inteligente: `/backoffice`
-- Login web general (Breeze/Inertia): `/login`
-- Recursos CRUD: `Systems`, `Modules`, `Endpoints`, `Artefacts`, `Users`, `Roles`, `Permissions`, `Organization Settings`
-- Reportes en sidebar: `/admin/reports` (dashboard + exportables)
-- Logs en sidebar: `/admin/logs` (visor visual de logs con filtros y stacktrace)
-- Publicacion de endpoints controlada por permiso `endpoint.publish`
-- Permisos de logs: `logs.view` (ver/descargar) y `logs.manage` (eliminar)
-- Tema visual del panel: `resources/css/filament/admin/theme.css`
+2.  **Instalar dependencias**:
+    ```bash
+    composer install
+    npm install
+    ```
 
-## Reinicio rapido de entorno
-- `php artisan atlashub:reset`
-- Usa `php artisan atlashub:reset --without-seed` si deseas una base limpia sin datos demo.
-- Usa `php artisan atlashub:reset --yes` para ejecutarlo sin confirmacion interactiva.
-- Despues, configura nombre/logo/colores en `http://127.0.0.1:8000/admin/organization-settings`.
+3.  **Inicializar base de datos**:
+    ```bash
+    php artisan key:generate
+    php artisan migrate --seed
+    ```
 
-## Documentacion
-- `docs/00-fase0-plan.md`
-- `docs/01-fase1-plan.md`
-- `docs/02-fase2-plan.md`
-- `docs/03-fase3-plan.md`
-- `docs/04-fase4-plan.md`
-- `docs/05-fase5-plan.md`
-- `docs/06-fase6-plan.md`
-- `docs/07-fase7-plan.md`
-- `docs/01-instalacion.md`
-- `docs/02-arquitectura.md`
-- `docs/03-modelo-datos.md`
-- `docs/04-api.md`
-- `docs/05-admin.md`
-- `docs/06-convenciones.md`
-- `docs/07-despliegue.md`
-- `docs/08-roadmap.md`
-- `docs/09-reportes.md`
-- `docs/09-contribuir.md`
+4.  **Iniciar servidores**:
+    ```bash
+    # En terminales separadas
+    php artisan serve
+    npm run dev
+    ```
 
-## Contribuir
-Guia completa: `docs/09-contribuir.md`
+### 🔑 Credenciales Demo
 
-1. Crear branch.
-2. Implementar cambio.
-3. Ejecutar `php artisan test` y `npm run build`.
-4. Abrir PR con descripcion tecnica y evidencia de pruebas.
+| Rol | Email | Password |
+| :--- | :--- | :--- |
+| **Admin** | `admin@rikarcoffe.local` | `password` |
+| **Editor** | `editor@rikarcoffe.local` | `password` |
+| **Viewer** | `viewer@rikarcoffe.local` | `password` |
 
-## Licencia
-Este proyecto se distribuye bajo licencia MIT.
+## 📚 Documentación
 
-Ver archivo: `LICENSE`.
+La documentación detallada se encuentra en la carpeta `docs/`:
+
+-   [Arquitectura](docs/02-arquitectura.md)
+-   [Modelo de Datos](docs/03-modelo-datos.md)
+-   [API Reference](docs/04-api.md)
+-   [Guía de Administración](docs/05-admin.md)
+-   [Despliegue](docs/07-despliegue.md)
+
+## 🤝 Contribución
+
+Este es un proyecto open source y las contribuciones son bienvenidas.
+
+1.  Haz un Fork del repositorio.
+2.  Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`).
+3.  Commit de tus cambios (`git commit -m 'Add some AmazingFeature'`).
+4.  Push a la rama (`git push origin feature/AmazingFeature`).
+5.  Abre un Pull Request.
+
+Consulta [docs/09-contribuir.md](docs/09-contribuir.md) para más detalles.
+
+## 📜 Licencia
+
+Distribuido bajo la licencia MIT. Ver `LICENSE` para más información.
+
+---
+
+<p align="center">
+  Creado con ❤️ por <strong>Erik Alan Alvarez</strong> y la comunidad.
+</p>
