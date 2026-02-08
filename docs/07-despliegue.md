@@ -28,6 +28,15 @@
   - `/api/v1/filters`
   - `/admin`
 
+## Manejo de caidas de base de datos
+- AtlasHub captura errores de conectividad DB y responde con:
+  - Web: vista custom `resources/views/errors/database-unavailable.blade.php` (HTTP 503).
+  - API: JSON consistente:
+    - `message: "No fue posible conectar con la base de datos."`
+    - `code: "DATABASE_UNAVAILABLE"`
+    - `retryable: true`
+- Objetivo: evitar pantallas tecnicas con stack trace en incidentes operativos y ofrecer una UX clara para reintento.
+
 ## Operacion
 - Rotacion de logs.
 - Backup de PostgreSQL.

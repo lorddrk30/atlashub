@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', PortalController::class)->name('portal.home');
+Route::get('/reports', PortalController::class)->name('portal.reports');
 Route::get('/endpoints/{publicId}', PortalController::class)->whereUlid('publicId')->name('portal.endpoint');
 Route::get('/backoffice', BackofficeEntryController::class)->name('backoffice.entry');
 Route::get('/backoffice/forbidden', [BackofficeEntryController::class, 'forbidden'])->name('backoffice.forbidden');

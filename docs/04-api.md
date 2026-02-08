@@ -91,3 +91,69 @@ Devuelve catalogos para construir filtros de la UI.
   "artefact_types": ["swagger", "postman", "repo", "docs", "runbook", "dashboard", "other"]
 }
 ```
+
+## GET /reports/summary
+Devuelve KPIs, graficas agregadas y tablas para dashboard de reportes.
+
+### Query params
+- `system_id` (int, opcional)
+- `module_id` (int, opcional)
+- `status` (string, opcional): `active|deprecated|archived`
+- `date_from` (date `Y-m-d`, opcional)
+- `date_to` (date `Y-m-d`, opcional)
+
+### Response (200)
+```json
+{
+  "kpis": {
+    "systems": 3,
+    "modules": 5,
+    "endpoints": 12,
+    "artefacts": 9
+  },
+  "charts": {
+    "endpoints_by_system": [],
+    "endpoints_by_module": [],
+    "artefacts_by_type": [],
+    "endpoints_by_method": []
+  },
+  "tables": {
+    "systems": [],
+    "modules": [],
+    "endpoints": [],
+    "artefacts": []
+  },
+  "filters": {
+    "systems": [],
+    "modules": [],
+    "statuses": []
+  },
+  "filters_applied": {
+    "system_id": null,
+    "module_id": null,
+    "status": null,
+    "date_from": null,
+    "date_to": null
+  },
+  "executive_summary": "AtlasHub registra ...",
+  "generated_at": "2026-02-08T20:00:00+00:00"
+}
+```
+
+## POST /reports/generate-pdf
+Genera reporte PDF profesional usando el resumen filtrado actual.
+
+### Body params (JSON)
+- `system_id` (int, opcional)
+- `module_id` (int, opcional)
+- `status` (string, opcional): `active|deprecated|archived`
+- `date_from` (date `Y-m-d`, opcional)
+- `date_to` (date `Y-m-d`, opcional)
+- `title` (string, opcional, max `120`)
+- `theme` (string, opcional): `dark|light`
+- `disposition` (string, opcional): `inline|download`
+
+### Response (200)
+- `application/pdf`
+- Si `disposition = inline`, el navegador puede abrir vista previa.
+- Si `disposition = download`, se descarga archivo PDF.

@@ -33,6 +33,7 @@
 - `Users`
 - `Roles`
 - `Permissions`
+- `Reportes` (pagina de backoffice en `/admin/reports` con acceso al dashboard analitico `/reports`)
 
 ## Reglas de permisos (RBAC)
 Permisos base sembrados en `DatabaseSeeder`:

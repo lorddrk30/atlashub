@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
     <head>
         <meta charset="utf-8">
@@ -97,7 +97,7 @@
     <body>
         <main class="panel">
             <p class="code">Error 403</p>
-            <h1>🔒 Acceso restringido</h1>
+            <h1>Acceso restringido</h1>
             <p>Este espacio necesita permisos adicionales para tu cuenta actual.</p>
 
             <div class="actions">
@@ -108,13 +108,12 @@
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <input type="hidden" name="redirect" value="/admin/login">
-                        <button type="submit" class="btn btn-primary">Cambiar cuenta ✨</button>
+                        <button type="submit" class="btn btn-primary">Cambiar cuenta</button>
                     </form>
                 @else
-                    <a href="/admin/login" class="btn btn-primary">Ir a login ✨</a>
+                    <a href="/admin/login" class="btn btn-primary">Ir a login</a>
                 @endauth
             </div>
         </main>
     </body>
 </html>
-

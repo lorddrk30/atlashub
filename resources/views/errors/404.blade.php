@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
     <head>
         <meta charset="utf-8">
@@ -97,12 +97,12 @@
     <body>
         <main class="panel">
             <p class="code">Error 404</p>
-            <h1>🔍 Página no encontrada</h1>
-            <p>Lo sentimos, la página que buscas no existe o ha sido movida a otra ubicación.</p>
+            <h1>Pagina no encontrada</h1>
+            <p>La pagina que buscas no existe o fue movida a otra ubicacion.</p>
 
             <div class="actions">
                 <a href="/" class="btn">Volver al portal</a>
-                <a href="/backoffice" class="btn btn-primary">Ir al inicio ✨</a>
+                <a href="/backoffice" class="btn btn-primary">Ir al inicio</a>
             </div>
         </main>
     </body>

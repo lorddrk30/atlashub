@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
     <head>
         <meta charset="utf-8">
@@ -97,12 +97,12 @@
     <body>
         <main class="panel">
             <p class="code">Error 429</p>
-            <h1>🚦 Demasiadas solicitudes</h1>
-            <p>Has realizado demasiadas peticiones en poco tiempo. Por favor, espera un momento antes de intentar nuevamente.</p>
+            <h1>Demasiadas solicitudes</h1>
+            <p>Realizaste demasiadas peticiones en poco tiempo. Espera unos segundos e intenta de nuevo.</p>
 
             <div class="actions">
                 <a href="/" class="btn">Volver al portal</a>
-                <button onclick="window.location.reload()" class="btn btn-primary">Reintentar ahora ✨</button>
+                <button onclick="window.location.reload()" class="btn btn-primary">Reintentar ahora</button>
             </div>
         </main>
     </body>

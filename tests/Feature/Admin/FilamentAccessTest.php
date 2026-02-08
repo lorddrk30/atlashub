@@ -21,6 +21,17 @@ it('allows admin role to access filament panel', function (): void {
     $response->assertSuccessful();
 });
 
+it('shows reports page in filament for admin role', function (): void {
+    $role = Role::query()->create(['name' => 'admin', 'guard_name' => 'web']);
+
+    $user = User::factory()->create();
+    $user->assignRole($role);
+
+    $response = $this->actingAs($user)->get('/admin/reports');
+
+    $response->assertSuccessful();
+});
+
 it('denies viewer role to access filament panel', function (): void {
     $role = Role::query()->create(['name' => 'viewer', 'guard_name' => 'web']);
 

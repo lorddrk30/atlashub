@@ -1,12 +1,14 @@
-﻿import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import EndpointDetailView from '../views/EndpointDetailView.vue';
+import ReportsDashboardView from '../views/ReportsDashboard.vue';
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: '/', name: 'home', component: HomeView },
     { path: '/endpoints/:publicId', name: 'endpoint-detail', component: EndpointDetailView, props: true },
+    { path: '/reports', name: 'reports-dashboard', component: ReportsDashboardView },
   ],
   scrollBehavior() {
     return { top: 0 };
@@ -14,3 +16,4 @@ const router = createRouter({
 });
 
 export default router;
+

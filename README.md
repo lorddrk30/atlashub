@@ -43,6 +43,8 @@ AtlasHub inicio como un proyecto personal de vibecoding, creado como alternativa
 - `GET /api/v1/search`
 - `GET /api/v1/endpoints/{public_id}`
 - `GET /api/v1/filters`
+- `GET /api/v1/reports/summary`
+- `POST /api/v1/reports/generate-pdf`
 
 ## Admin
 - URL: `/admin`
@@ -50,6 +52,7 @@ AtlasHub inicio como un proyecto personal de vibecoding, creado como alternativa
 - Entrada inteligente: `/backoffice`
 - Login web general (Breeze/Inertia): `/login`
 - Recursos CRUD: `Systems`, `Modules`, `Endpoints`, `Artefacts`, `Users`, `Roles`, `Permissions`, `Organization Settings`
+- Reportes en sidebar: `/admin/reports` (dashboard + exportables)
 - Publicacion de endpoints controlada por permiso `endpoint.publish`
 - Tema visual del panel: `resources/css/filament/admin/theme.css`
 
@@ -67,6 +70,7 @@ AtlasHub inicio como un proyecto personal de vibecoding, creado como alternativa
 - `docs/04-fase4-plan.md`
 - `docs/05-fase5-plan.md`
 - `docs/06-fase6-plan.md`
+- `docs/07-fase7-plan.md`
 - `docs/01-instalacion.md`
 - `docs/02-arquitectura.md`
 - `docs/03-modelo-datos.md`
@@ -75,6 +79,7 @@ AtlasHub inicio como un proyecto personal de vibecoding, creado como alternativa
 - `docs/06-convenciones.md`
 - `docs/07-despliegue.md`
 - `docs/08-roadmap.md`
+- `docs/09-reportes.md`
 - `docs/09-contribuir.md`
 
 ## Contribuir

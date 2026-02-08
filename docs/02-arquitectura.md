@@ -10,8 +10,13 @@ AtlasHub usa una arquitectura por capas con foco en el catalogo tecnico:
   - `Repositories`: consultas SQL y armado de datos.
   - `Services`: orquestacion por caso de uso.
   - `Actions`: entrada explicita para controllers.
+- `App/Domain/Reports`
+  - `DTOs`: filtros y opciones para exportables.
+  - `Repositories`: agregaciones (`group by`, `count`) para KPIs y tablas.
+  - `Services`: composicion de dashboard y generacion PDF.
 - `App/Http`
   - Controllers API v1 (`Search`, `Endpoint`, `Filter`).
+  - Controller API v1 de reportes (`ReportsController`).
   - Form request para validacion de query params (`SearchRequest`).
 - `App/Models`
   - `System`, `Module`, `Endpoint`, `Artefact`, `OrganizationSetting`.
