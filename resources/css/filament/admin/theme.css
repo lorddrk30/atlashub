@@ -1,0 +1,230 @@
+@import url('https://fonts.bunny.net/css?family=sora:400,500,600,700,800');
+
+:root {
+    --atlas-admin-bg: #050915;
+    --atlas-admin-bg-soft: #0c1427;
+    --atlas-admin-border: rgba(148, 163, 184, 0.24);
+    --atlas-admin-card: rgba(15, 23, 42, 0.66);
+    --atlas-admin-card-strong: rgba(15, 23, 42, 0.82);
+    --atlas-admin-highlight: rgba(34, 211, 238, 0.38);
+    --atlas-admin-glow: rgba(16, 185, 129, 0.22);
+}
+
+.fi {
+    --font-family: 'Sora', 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+}
+
+.fi-body {
+    min-height: 100dvh;
+    background-color: var(--atlas-admin-bg);
+    background-image:
+        radial-gradient(circle at 16% 8%, rgba(6, 182, 212, 0.26), transparent 34%),
+        radial-gradient(circle at 88% 18%, rgba(16, 185, 129, 0.22), transparent 36%),
+        linear-gradient(165deg, #050915 20%, #0a1122 58%, #060c1b 100%);
+}
+
+.fi-body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+        linear-gradient(to right, rgba(148, 163, 184, 0.07) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(148, 163, 184, 0.07) 1px, transparent 1px);
+    background-size: 28px 28px;
+    opacity: 0.28;
+}
+
+.fi-layout,
+.fi-main-ctn,
+.fi-main,
+.fi-page {
+    background: transparent;
+}
+
+.fi-topbar-ctn {
+    background: transparent;
+}
+
+.fi-topbar {
+    margin: 0.75rem 1rem 0.25rem;
+    border: 1px solid var(--atlas-admin-border);
+    border-radius: 1rem;
+    background: rgba(5, 9, 21, 0.64);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 12px 35px rgba(2, 6, 23, 0.46);
+}
+
+.fi-topbar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: inset 0 0 0 1px rgba(34, 211, 238, 0.14);
+}
+
+.fi-sidebar {
+    border-right: 1px solid var(--atlas-admin-border);
+    background:
+        linear-gradient(180deg, rgba(6, 182, 212, 0.1), transparent 28%),
+        linear-gradient(180deg, rgba(5, 9, 21, 0.94), rgba(5, 9, 21, 0.86));
+    backdrop-filter: blur(12px);
+}
+
+.fi-sidebar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at top, rgba(34, 211, 238, 0.08), transparent 55%);
+}
+
+.fi-sidebar-header,
+.fi-sidebar-footer {
+    background: transparent;
+}
+
+.fi-sidebar-item-btn,
+.fi-sidebar-group-dropdown-trigger-btn,
+.fi-sidebar-database-notifications-btn {
+    border-radius: 0.9rem;
+}
+
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn,
+.fi-sidebar-item.fi-sidebar-item-has-active-child-items > .fi-sidebar-item-btn {
+    background: linear-gradient(90deg, rgba(34, 211, 238, 0.2), rgba(16, 185, 129, 0.18));
+    box-shadow: inset 0 0 0 1px rgba(34, 211, 238, 0.3);
+}
+
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-sidebar-item-label,
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-icon {
+    color: rgb(207, 250, 254);
+}
+
+.fi-sidebar-item-btn:not(.fi-active):hover,
+.fi-sidebar-group-dropdown-trigger-btn:hover {
+    background: rgba(148, 163, 184, 0.1);
+}
+
+.fi-page-header-main-ctn,
+.fi-page-content,
+.fi-simple-main {
+    gap: 1rem;
+}
+
+.fi-section:not(.fi-section-not-contained),
+.fi-ta-ctn,
+.fi-modal-window,
+.fi-dropdown-panel {
+    border: 1px solid var(--atlas-admin-border);
+    border-radius: 1rem;
+    background: var(--atlas-admin-card);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 16px 45px rgba(2, 6, 23, 0.45);
+}
+
+.fi-section:not(.fi-section-not-contained):hover,
+.fi-ta-ctn:hover {
+    box-shadow: 0 18px 50px rgba(2, 6, 23, 0.58), 0 0 0 1px rgba(34, 211, 238, 0.12);
+}
+
+.fi-section-header {
+    border-bottom-color: rgba(148, 163, 184, 0.17);
+}
+
+.fi-input-wrp {
+    border-color: rgba(148, 163, 184, 0.26);
+    border-radius: 0.85rem;
+    background: rgba(15, 23, 42, 0.78);
+}
+
+.fi-input-wrp:not(.fi-disabled):focus-within {
+    border-color: rgba(34, 211, 238, 0.55);
+    box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.2);
+}
+
+.fi-fo-field-wrp-label {
+    color: rgb(226, 232, 240);
+}
+
+.fi-btn {
+    border-radius: 0.85rem;
+    transition: transform 0.16s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.fi-btn:not(.fi-disabled):not([disabled]):hover {
+    transform: translateY(-1px);
+}
+
+.fi-btn.fi-color-primary:not(.fi-outlined) {
+    border: 0;
+    background: linear-gradient(135deg, rgb(34, 211, 238), rgb(16, 185, 129));
+    color: rgb(4, 7, 18);
+    box-shadow: 0 10px 24px rgba(8, 145, 178, 0.35);
+}
+
+.fi-btn.fi-color-primary:not(.fi-outlined):not(.fi-disabled):not([disabled]):hover {
+    filter: brightness(1.07);
+}
+
+.fi-badge {
+    border-radius: 0.7rem;
+}
+
+.fi-ta-table > tbody > tr {
+    transition: background-color 0.18s ease;
+}
+
+.fi-ta-table > tbody > tr:hover {
+    background: rgba(34, 211, 238, 0.08);
+}
+
+.fi-simple-layout {
+    background: transparent;
+}
+
+.fi-simple-main-ctn {
+    max-width: 30rem;
+}
+
+.fi-simple-main {
+    position: relative;
+    border: 1px solid var(--atlas-admin-border);
+    border-radius: 1.25rem;
+    background: var(--atlas-admin-card-strong);
+    box-shadow: 0 24px 50px rgba(2, 6, 23, 0.5);
+    backdrop-filter: blur(18px);
+}
+
+.fi-simple-main::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(140deg, rgba(34, 211, 238, 0.25), rgba(16, 185, 129, 0.16), transparent 68%);
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    padding: 1px;
+}
+
+.fi-simple-header-heading {
+    letter-spacing: -0.02em;
+}
+
+.fi-simple-header-subheading {
+    color: rgb(148, 163, 184);
+}
+
+.fi-modal-close-overlay {
+    background: rgba(2, 6, 23, 0.72);
+}
+
+.fi-dropdown-panel {
+    background: rgba(8, 15, 33, 0.9);
+}
+
+.fi-no-notification + .fi-modal {
+    backdrop-filter: blur(2px);
+}

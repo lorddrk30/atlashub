@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  body {
+    font-family: 'Sora', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #040712;
+    color: #f8fafc;
+  }
+
+  h1,
+  h2,
+  h3,
+  .display-title {
+    font-family: 'Space Grotesk', 'Sora', 'Segoe UI', sans-serif;
+  }
+}
+
+@layer utilities {
+  @keyframes atlas-float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+
+    50% {
+      transform: translateY(-14px);
+    }
+  }
+
+  @keyframes atlas-float-reverse {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+
+    50% {
+      transform: translateY(10px);
+    }
+  }
+
+  .animate-float-slow {
+    animation: atlas-float 9s ease-in-out infinite;
+  }
+
+  .animate-float-reverse {
+    animation: atlas-float-reverse 11s ease-in-out infinite;
+  }
+
+  .atlas-grid {
+    background-image:
+      linear-gradient(to right, rgb(148 163 184 / 0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(148 163 184 / 0.08) 1px, transparent 1px);
+    background-size: 26px 26px;
+  }
+}
