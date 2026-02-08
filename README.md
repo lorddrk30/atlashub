@@ -12,9 +12,6 @@
 
 </div>
 
-<p align="center">
-  <strong>Portal interno tipo Backstage-lite para catalogar y descubrir APIs internas.</strong>
-</p>
 
 ---
 
