@@ -4,6 +4,7 @@ namespace App\Domain\Catalog\Repositories;
 
 use App\Domain\Catalog\DTOs\SearchFiltersData;
 use App\Models\Artefact;
+use App\Models\Document;
 use App\Models\Endpoint;
 use App\Models\Module;
 use App\Models\System;
@@ -27,7 +28,7 @@ class CatalogSearchRepository
             'public_url',
             'responsibles',
             'user_areas',
-            'gitlab_url',
+            'repository_url',
             'home_preview_url',
         ]);
 
@@ -47,7 +48,7 @@ class CatalogSearchRepository
                     ->orWhereRaw('LOWER(dev_server) LIKE ?', ["%{$needle}%"])
                     ->orWhereRaw('LOWER(internal_url) LIKE ?', ["%{$needle}%"])
                     ->orWhereRaw('LOWER(public_url) LIKE ?', ["%{$needle}%"])
-                    ->orWhereRaw('LOWER(gitlab_url) LIKE ?', ["%{$needle}%"])
+                    ->orWhereRaw('LOWER(COALESCE(repository_url, gitlab_url)) LIKE ?', ["%{$needle}%"])
                     ->orWhereRaw('LOWER(CAST(responsibles AS TEXT)) LIKE ?', ["%{$needle}%"])
                     ->orWhereRaw('LOWER(CAST(user_areas AS TEXT)) LIKE ?', ["%{$needle}%"]);
             });
@@ -229,6 +230,64 @@ class CatalogSearchRepository
             ->get();
     }
 
+    public function searchDocuments(SearchFiltersData $filters): Collection
+    {
+        $query = Document::query()
+            ->select([
+                'id',
+                'system_id',
+                'module_id',
+                'endpoint_id',
+                'title',
+                'description',
+                'type',
+                'mime_type',
+                'size',
+                'created_at',
+                'updated_at',
+            ])
+            ->with([
+                'system:id,name,slug',
+                'module:id,system_id,name,slug',
+                'endpoint:id,public_id,module_id,name,method,path',
+            ]);
+
+        if ($filters->systemId) {
+            $query->where('system_id', $filters->systemId);
+        }
+
+        if ($filters->moduleId) {
+            $query->where('module_id', $filters->moduleId);
+        }
+
+        if ($filters->query) {
+            $needle = mb_strtolower($filters->query);
+            $query->where(function ($subQuery) use ($needle): void {
+                $subQuery
+                    ->whereRaw('LOWER(title) LIKE ?', ["%{$needle}%"])
+                    ->orWhereRaw('LOWER(description) LIKE ?', ["%{$needle}%"])
+                    ->orWhereRaw('LOWER(type) LIKE ?', ["%{$needle}%"])
+                    ->orWhereHas('system', function ($systemQuery) use ($needle): void {
+                        $systemQuery
+                            ->whereRaw('LOWER(name) LIKE ?', ["%{$needle}%"])
+                            ->orWhereRaw('LOWER(slug) LIKE ?', ["%{$needle}%"]);
+                    })
+                    ->orWhereHas('module', function ($moduleQuery) use ($needle): void {
+                        $moduleQuery
+                            ->whereRaw('LOWER(name) LIKE ?', ["%{$needle}%"])
+                            ->orWhereRaw('LOWER(slug) LIKE ?', ["%{$needle}%"]);
+                    })
+                    ->orWhereHas('endpoint', function ($endpointQuery) use ($needle): void {
+                        $endpointQuery
+                            ->whereRaw('LOWER(name) LIKE ?', ["%{$needle}%"])
+                            ->orWhereRaw('LOWER(path) LIKE ?', ["%{$needle}%"]);
+                    });
+            });
+        }
+
+        return $query->latest()->limit($filters->perCategory)->get();
+    }
+
     public function findEndpointByPublicId(string $publicId): ?Endpoint
     {
         return Endpoint::query()
@@ -245,6 +304,7 @@ class CatalogSearchRepository
             'methods' => Endpoint::METHODS,
             'authentication_types' => Endpoint::AUTH_TYPES,
             'artefact_types' => Artefact::TYPES,
+            'document_types' => Document::TYPES,
         ];
     }
 

@@ -42,8 +42,15 @@
 - Dominios: `internal_url` y `public_url`.
 - Responsables del sistema (lista).
 - Areas usuarias (lista).
-- URL del repositorio en GitLab.
+- URL del repositorio (GitHub/GitLab/Bitbucket/otro).
 - Captura/preview del home del sistema (upload de imagen desde Filament).
+- Tab `Documentos` por sistema:
+  - Lista de manuales asociados al sistema.
+  - Boton `Subir Manual`.
+  - Campos: titulo, descripcion, tipo, PDF, modulo opcional, endpoint opcional.
+  - Nota UX: al crear un sistema nuevo, primero se guarda y redirige a edicion; ahi aparece la pestana `Documentos`.
+  - Visibilidad: usuarios con `document.view` o `document.manage`.
+  - Edicion: subir/eliminar solo con `document.manage`.
 
 ## UX de reportes en backoffice
 - La pagina `/admin/reports` usa un layout visual propio (hero + KPIs + vista integrada) para no mostrar una pantalla tecnica plana.
@@ -69,10 +76,12 @@ Permisos base sembrados en `DatabaseSeeder`:
 - `role.manage`
 - `logs.view`
 - `logs.manage`
+- `document.view`
+- `document.manage`
 
 Roles:
 - `admin`: todos los permisos.
-- `editor`: sistemas/modulos/endpoints/artefactos + publicar endpoints + lectura de logs (sin acceso a Organization Settings).
+- `editor`: sistemas/modulos/endpoints/artefactos/documentos + publicar endpoints + lectura de logs (sin acceso a Organization Settings).
 - `viewer`: sin permisos de administracion y sin acceso al panel.
 
 ## Personalizacion de marca

@@ -3,11 +3,13 @@
 namespace App\Providers;
 
 use App\Models\Artefact;
+use App\Models\Document;
 use App\Models\Endpoint;
 use App\Models\Module;
 use App\Models\OrganizationSetting;
 use App\Models\System;
 use App\Policies\ArtefactPolicy;
+use App\Policies\DocumentPolicy;
 use App\Policies\EndpointPolicy;
 use App\Policies\ModulePolicy;
 use App\Policies\OrganizationSettingPolicy;
@@ -18,6 +20,7 @@ class AuthServiceProvider extends ServiceProvider
 {
     protected $policies = [
         Artefact::class => ArtefactPolicy::class,
+        Document::class => DocumentPolicy::class,
         Endpoint::class => EndpointPolicy::class,
         Module::class => ModulePolicy::class,
         OrganizationSetting::class => OrganizationSettingPolicy::class,

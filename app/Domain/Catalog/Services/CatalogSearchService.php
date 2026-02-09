@@ -17,21 +17,24 @@ class CatalogSearchService
         $modules = $this->repository->searchModules($filters);
         $endpoints = $this->repository->searchEndpoints($filters);
         $artefacts = $this->repository->searchArtefacts($filters);
+        $documents = $this->repository->searchDocuments($filters);
 
         return [
             'query' => $filters->query,
-            'total' => $systems->count() + $modules->count() + $endpoints->count() + $artefacts->count(),
+            'total' => $systems->count() + $modules->count() + $endpoints->count() + $artefacts->count() + $documents->count(),
             'counts' => [
                 'systems' => $systems->count(),
                 'modules' => $modules->count(),
                 'endpoints' => $endpoints->count(),
                 'artefacts' => $artefacts->count(),
+                'documents' => $documents->count(),
             ],
             'grouped' => [
                 'systems' => $systems,
                 'modules' => $modules,
                 'endpoints' => $endpoints,
                 'artefacts' => $artefacts,
+                'documents' => $documents,
             ],
         ];
     }

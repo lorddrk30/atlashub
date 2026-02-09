@@ -11,6 +11,7 @@ export const useCatalogSearchStore = defineStore('catalogSearch', () => {
     methods: [],
     authentication_types: [],
     artefact_types: [],
+    document_types: [],
   });
 
   const query = reactive({
@@ -29,12 +30,14 @@ export const useCatalogSearchStore = defineStore('catalogSearch', () => {
       modules: 0,
       endpoints: 0,
       artefacts: 0,
+      documents: 0,
     },
     grouped: {
       systems: [],
       modules: [],
       endpoints: [],
       artefacts: [],
+      documents: [],
     },
   });
 
@@ -69,6 +72,7 @@ export const useCatalogSearchStore = defineStore('catalogSearch', () => {
     filters.methods = data.methods || [];
     filters.authentication_types = data.authentication_types || [];
     filters.artefact_types = data.artefact_types || [];
+    filters.document_types = data.document_types || [];
   };
 
   const search = async () => {
@@ -79,8 +83,20 @@ export const useCatalogSearchStore = defineStore('catalogSearch', () => {
       const data = await response.json();
 
       results.total = data.total || 0;
-      results.counts = data.counts || { systems: 0, modules: 0, endpoints: 0, artefacts: 0 };
-      results.grouped = data.grouped || { systems: [], modules: [], endpoints: [], artefacts: [] };
+      results.counts = data.counts || {
+        systems: 0,
+        modules: 0,
+        endpoints: 0,
+        artefacts: 0,
+        documents: 0,
+      };
+      results.grouped = data.grouped || {
+        systems: [],
+        modules: [],
+        endpoints: [],
+        artefacts: [],
+        documents: [],
+      };
     } finally {
       loading.value = false;
       initialized.value = true;

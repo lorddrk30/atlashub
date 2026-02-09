@@ -14,12 +14,15 @@ AtlasHub usa una arquitectura por capas con foco en el catalogo tecnico:
   - `DTOs`: filtros y opciones para exportables.
   - `Repositories`: agregaciones (`group by`, `count`) para KPIs y tablas.
   - `Services`: composicion de dashboard y generacion PDF.
+- `App/Domain/Documents`
+  - `Services`: subida, consulta y eliminacion de manuales PDF.
 - `App/Http`
   - Controllers API v1 (`Search`, `Endpoint`, `Filter`).
+  - Controllers API v1 de documentos (`DocumentController`, `DocumentFileController`).
   - Controller API v1 de reportes (`ReportsController`).
-  - Form request para validacion de query params (`SearchRequest`).
+  - Form requests para busqueda y documentos (`SearchRequest`, `ListDocumentsRequest`, `StoreDocumentRequest`).
 - `App/Models`
-  - `System`, `Module`, `Endpoint`, `Artefact`, `OrganizationSetting`.
+  - `System`, `Module`, `Endpoint`, `Artefact`, `Document`, `OrganizationSetting`.
 - `App/Policies`
   - autorizacion granular por permisos.
 - `App/Support`
@@ -43,6 +46,7 @@ AtlasHub usa una arquitectura por capas con foco en el catalogo tecnico:
    - `modules`
    - `endpoints`
    - `artefacts`
+   - `documents`
 5. Se devuelve respuesta agrupada y contadores por categoria.
 
 ## Flujo de detalle endpoint

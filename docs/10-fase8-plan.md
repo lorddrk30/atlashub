@@ -4,7 +4,7 @@
 Extender `systems` para capturar datos operativos clave y mostrarlos en portal y backoffice.
 
 ## Alcance
-1. Migracion con campos de servidores, dominios, responsables, areas usuarias, GitLab y preview del home.
+1. Migracion con campos de servidores, dominios, responsables, areas usuarias, repositorio y preview del home.
 2. Ajuste de modelo, factory y seeders.
 3. Ajuste de CRUD de Systems en Filament.
 4. Incluir los nuevos campos en `GET /api/v1/search` para categoria `systems`.
@@ -13,6 +13,6 @@ Extender `systems` para capturar datos operativos clave y mostrarlos en portal y
 
 ## Criterios de aceptacion
 - Se pueden crear/editar los nuevos campos desde `/admin/systems`.
-- La busqueda por `q` encuentra sistemas por GitLab, servidores y dominios.
+- La busqueda por `q` encuentra sistemas por URL de repositorio, servidores y dominios.
 - Las cards de sistemas muestran info operativa sin romper UX.
 - Pruebas de API siguen en verde.

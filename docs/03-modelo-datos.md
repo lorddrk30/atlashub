@@ -5,6 +5,7 @@
 - `modules`
 - `endpoints`
 - `artefacts`
+- `documents`
 - `organization_settings`
 
 ## systems
@@ -20,7 +21,7 @@ Campos:
 - `public_url` (nullable)
 - `responsibles` (json nullable)
 - `user_areas` (json nullable)
-- `gitlab_url` (nullable)
+- `repository_url` (nullable, GitHub/GitLab/Bitbucket/otro)
 - `home_preview_url` (nullable)
 - `timestamps`
 
@@ -28,6 +29,7 @@ Relaciones:
 - `hasMany modules`
 - `hasManyThrough endpoints`
 - `hasMany artefacts`
+- `hasMany documents`
 
 ## modules
 Campos:
@@ -47,6 +49,7 @@ Relaciones:
 - `belongsTo system`
 - `hasMany endpoints`
 - `hasMany artefacts`
+- `hasMany documents`
 
 ## endpoints
 Campos:
@@ -76,6 +79,32 @@ Indices y constraints:
 Relaciones:
 - `belongsTo module`
 - `hasMany artefacts`
+- `hasMany documents`
+
+## documents
+Campos:
+- `id`
+- `system_id` (FK requerido -> systems)
+- `module_id` (FK nullable -> modules)
+- `endpoint_id` (FK nullable -> endpoints)
+- `title`
+- `description` (nullable)
+- `type` (`manual|guia|procedimiento|diagrama|politica`)
+- `file_path` (ruta interna en `storage/app/public/documents/{system_slug}/`)
+- `mime_type` (esperado `application/pdf`)
+- `size` (bytes)
+- `uploaded_by` (FK -> users)
+- `timestamps`
+
+Indices:
+- index compuesto (`system_id`, `type`)
+- index compuesto (`module_id`, `endpoint_id`)
+
+Relaciones:
+- `belongsTo system`
+- `belongsTo module`
+- `belongsTo endpoint`
+- `belongsTo uploader (User)`
 
 Nota de seguridad:
 - El `id` autoincremental queda interno.
@@ -135,3 +164,5 @@ Permisos de negocio:
 - `organization.manage`
 - `user.manage`
 - `role.manage`
+- `document.view`
+- `document.manage`

@@ -6,6 +6,7 @@ use App\Filament\Resources\Systems\Pages\CreateSystem;
 use App\Filament\Resources\Systems\Pages\EditSystem;
 use App\Filament\Resources\Systems\Pages\ListSystems;
 use App\Filament\Resources\Systems\Pages\ViewSystem;
+use App\Filament\Resources\Systems\RelationManagers\DocumentsRelationManager;
 use App\Filament\Resources\Systems\Schemas\SystemForm;
 use App\Filament\Resources\Systems\Schemas\SystemInfolist;
 use App\Filament\Resources\Systems\Tables\SystemsTable;
@@ -58,7 +59,9 @@ class SystemResource extends Resource
 
     public static function getRelations(): array
     {
-        return [];
+        return [
+            DocumentsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

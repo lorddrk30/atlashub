@@ -31,10 +31,11 @@ class SystemsTable
                     ->limit(32)
                     ->url(fn ($record) => $record->internal_url, true)
                     ->toggleable(),
-                TextColumn::make('gitlab_url')
-                    ->label('GitLab')
+                TextColumn::make('repository_url')
+                    ->label('Repositorio')
+                    ->state(fn ($record) => $record->repository_url ?: $record->gitlab_url)
                     ->formatStateUsing(fn ($state) => filled($state) ? 'Abrir repo' : '-')
-                    ->url(fn ($record) => $record->gitlab_url, shouldOpenInNewTab: true)
+                    ->url(fn ($record) => $record->repository_url ?: $record->gitlab_url, shouldOpenInNewTab: true)
                     ->toggleable(),
                 TextColumn::make('updated_at')->label('Actualizado')->dateTime()->sortable(),
             ])

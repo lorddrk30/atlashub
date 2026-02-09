@@ -56,9 +56,10 @@ class SystemForm
                     ->label('Areas usuarias')
                     ->placeholder('Agrega un area usuaria y presiona Enter')
                     ->columnSpanFull(),
-                TextInput::make('gitlab_url')
-                    ->label('URL de GitLab')
-                    ->placeholder('https://gitlab.rikarcoffe.local/grupo/proyecto')
+                TextInput::make('repository_url')
+                    ->label('URL del repositorio')
+                    ->placeholder('https://github.com/org/proyecto')
+                    ->helperText('Compatible con GitHub, GitLab, Bitbucket u otro repositorio.')
                     ->url()
                     ->maxLength(255)
                     ->columnSpanFull(),

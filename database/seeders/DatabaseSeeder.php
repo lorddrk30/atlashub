@@ -29,6 +29,8 @@ class DatabaseSeeder extends Seeder
             'endpoint.manage',
             'endpoint.publish',
             'artefact.manage',
+            'document.view',
+            'document.manage',
             'organization.manage',
             'user.manage',
             'role.manage',
@@ -51,9 +53,13 @@ class DatabaseSeeder extends Seeder
             'endpoint.manage',
             'endpoint.publish',
             'artefact.manage',
+            'document.view',
+            'document.manage',
             'logs.view',
         ]);
-        $viewerRole->syncPermissions([]);
+        $viewerRole->syncPermissions([
+            'document.view',
+        ]);
 
         $admin = User::query()->firstOrCreate(
             ['email' => 'admin@rikarcoffe.local'],
@@ -101,7 +107,7 @@ class DatabaseSeeder extends Seeder
                 'public_url' => 'https://app.rikarcoffe.com',
                 'responsibles' => ['Equipo Plataforma API', 'Lider CX Digital'],
                 'user_areas' => ['Operacion en tienda', 'Experiencia cliente'],
-                'gitlab_url' => 'https://gitlab.rikarcoffe.local/cx/customer-experience',
+                'repository_url' => 'https://github.com/rikarcoffe/customer-experience',
                 'home_preview_url' => 'https://placehold.co/1200x720/0b1220/22d3ee?text=RikarCoffe+CX+Home',
             ]
         );
@@ -118,7 +124,7 @@ class DatabaseSeeder extends Seeder
                 'public_url' => null,
                 'responsibles' => ['Equipo Operaciones Digitales'],
                 'user_areas' => ['Sucursales', 'Recursos humanos'],
-                'gitlab_url' => 'https://gitlab.rikarcoffe.local/ops/store-operations',
+                'repository_url' => 'https://gitlab.rikarcoffe.local/ops/store-operations',
                 'home_preview_url' => 'https://placehold.co/1200x720/111827/34d399?text=RikarCoffe+Ops+Home',
             ]
         );
@@ -135,7 +141,7 @@ class DatabaseSeeder extends Seeder
                 'public_url' => null,
                 'responsibles' => ['Equipo Supply Tech', 'Lider Compras'],
                 'user_areas' => ['Compras', 'Inventario'],
-                'gitlab_url' => 'https://gitlab.rikarcoffe.local/supply/supply-chain',
+                'repository_url' => 'https://bitbucket.rikarcoffe.local/projects/SUP/repos/supply-chain',
                 'home_preview_url' => 'https://placehold.co/1200x720/0f172a/a5f3fc?text=RikarCoffe+Supply+Home',
             ]
         );

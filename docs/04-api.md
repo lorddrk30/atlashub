@@ -18,24 +18,26 @@ Busca en catalogo y devuelve resultados agrupados.
 ```json
 {
   "query": "menu",
-  "total": 4,
+  "total": 5,
   "counts": {
     "systems": 1,
     "modules": 1,
     "endpoints": 1,
-    "artefacts": 1
+    "artefacts": 1,
+    "documents": 1
   },
   "grouped": {
     "systems": [],
     "modules": [],
     "endpoints": [],
-    "artefacts": []
+    "artefacts": [],
+    "documents": []
   }
 }
 ```
 
 Notas para `grouped.systems[*]`:
-- Incluye metadatos operativos: `prod_server`, `uat_server`, `dev_server`, `internal_url`, `public_url`, `responsibles`, `user_areas`, `gitlab_url`, `home_preview_url`.
+- Incluye metadatos operativos: `prod_server`, `uat_server`, `dev_server`, `internal_url`, `public_url`, `responsibles`, `user_areas`, `repository_url`, `home_preview_url`.
 - El texto libre `q` tambien hace match contra esos campos para discovery tecnico mas rapido.
 
 ## GET /endpoints/{public_id}
@@ -92,9 +94,78 @@ Devuelve catalogos para construir filtros de la UI.
   "modules": [],
   "methods": ["GET", "POST", "PUT", "PATCH", "DELETE"],
   "authentication_types": ["none", "bearer", "basic", "api_key", "oauth2", "session", "custom"],
-  "artefact_types": ["swagger", "postman", "repo", "docs", "runbook", "dashboard", "other"]
+  "artefact_types": ["swagger", "postman", "repo", "docs", "runbook", "dashboard", "other"],
+  "document_types": ["manual", "guia", "procedimiento", "diagrama", "politica"]
 }
 ```
+
+## Documentos
+
+Accesos:
+- `GET /documents` y `GET /documents/{id}`: lectura publica de metadata para el portal.
+- `GET /documents/{id}/file`: requiere `auth:sanctum` + `document.view`.
+- `POST /documents` y `DELETE /documents/{id}`: requiere `auth:sanctum` + `document.manage`.
+
+## POST /documents
+Sube un documento PDF asociado a un sistema.
+
+### Body params (`multipart/form-data`)
+- `system_id` (int, requerido)
+- `module_id` (int, opcional)
+- `endpoint_id` (int, opcional)
+- `title` (string, requerido)
+- `description` (string, opcional)
+- `type` (enum: `manual|guia|procedimiento|diagrama|politica`)
+- `file` (archivo PDF, max 20MB)
+
+### Response (201)
+```json
+{
+  "item": {
+    "id": 10,
+    "system_id": 1,
+    "module_id": 3,
+    "endpoint_id": null,
+    "title": "Manual de Usuario",
+    "type": "manual",
+    "view_url": "http://127.0.0.1:8000/documents/10/file",
+    "download_url": "http://127.0.0.1:8000/documents/10/file?download=1"
+  }
+}
+```
+
+## GET /documents?system_id=
+Lista documentos por sistema (obligatorio), con filtros opcionales.
+
+### Query params
+- `system_id` (int, requerido)
+- `module_id` (int, opcional)
+- `endpoint_id` (int, opcional)
+- `q` (string, opcional: busca en titulo/descripcion)
+
+### Response (200)
+```json
+{
+  "items": [],
+  "meta": {
+    "current_page": 1,
+    "per_page": 20,
+    "total": 0
+  }
+}
+```
+
+## GET /documents/{id}
+Devuelve metadata de un documento.
+
+## GET /documents/{id}/file
+Entrega el PDF autenticado.
+- Inline por defecto (preview).
+- `?download=1` para descarga.
+- Nota UX: el portal usa las URLs `view_url/download_url` en ruta web (`/documents/{id}/file`) para evitar redirecciones no deseadas de `auth:sanctum`.
+
+## DELETE /documents/{id}
+Elimina metadata y archivo fisico del documento.
 
 ## GET /reports/summary
 Devuelve KPIs, graficas agregadas y tablas para dashboard de reportes.

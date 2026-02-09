@@ -20,7 +20,11 @@ class SystemInfolist
                 TextEntry::make('dev_server')->label('Servidor DEV')->placeholder('-'),
                 TextEntry::make('internal_url')->label('Dominio interno')->placeholder('-')->url(fn ($state) => $state),
                 TextEntry::make('public_url')->label('Dominio publico')->placeholder('-')->url(fn ($state) => $state),
-                TextEntry::make('gitlab_url')->label('Repositorio GitLab')->placeholder('-')->url(fn ($state) => $state),
+                TextEntry::make('repository_url')
+                    ->label('Repositorio')
+                    ->state(fn ($record) => $record->repository_url ?: $record->gitlab_url)
+                    ->placeholder('-')
+                    ->url(fn ($state) => $state),
                 TextEntry::make('responsibles')
                     ->label('Responsables')
                     ->formatStateUsing(fn ($state): string => is_array($state) && $state !== [] ? implode(', ', $state) : '-')

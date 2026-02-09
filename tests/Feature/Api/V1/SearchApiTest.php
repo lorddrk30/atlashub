@@ -1,6 +1,7 @@
 ﻿<?php
 
 use App\Models\Artefact;
+use App\Models\Document;
 use App\Models\Endpoint;
 use App\Models\Module;
 use App\Models\System;
@@ -20,7 +21,7 @@ it('returns grouped catalog results', function (): void {
         'public_url' => 'https://coffee.example.com',
         'responsibles' => ['Equipo CX', 'Arquitectura'],
         'user_areas' => ['Operacion', 'Comercial'],
-        'gitlab_url' => 'https://gitlab.internal.local/cx/coffee-experience',
+        'repository_url' => 'https://github.com/coffee/coffee-experience',
         'home_preview_url' => 'https://placehold.co/1200x720/0b1220/22d3ee?text=Coffee+Home',
     ]);
     $module = Module::factory()->create([
@@ -51,6 +52,19 @@ it('returns grouped catalog results', function (): void {
         'updated_by' => $user->id,
     ]);
 
+    Document::query()->create([
+        'system_id' => $system->id,
+        'module_id' => $module->id,
+        'endpoint_id' => $endpoint->id,
+        'title' => 'Manual operativo coffee',
+        'description' => 'Procedimiento para alta de productos.',
+        'type' => 'manual',
+        'file_path' => 'documents/'.$system->slug.'/manual-operativo.pdf',
+        'mime_type' => 'application/pdf',
+        'size' => 1024,
+        'uploaded_by' => $user->id,
+    ]);
+
     $response = $this->getJson('/api/v1/search?q=coffee');
 
     $response
@@ -59,8 +73,10 @@ it('returns grouped catalog results', function (): void {
         ->assertJsonPath('counts.modules', 1)
         ->assertJsonPath('counts.endpoints', 1)
         ->assertJsonPath('counts.artefacts', 1)
+        ->assertJsonPath('counts.documents', 1)
         ->assertJsonPath('grouped.systems.0.prod_server', 'prod-coffee-api-01.internal.local')
-        ->assertJsonPath('grouped.systems.0.gitlab_url', 'https://gitlab.internal.local/cx/coffee-experience')
+        ->assertJsonPath('grouped.systems.0.repository_url', 'https://github.com/coffee/coffee-experience')
+        ->assertJsonPath('grouped.documents.0.title', 'Manual operativo coffee')
         ->assertJsonPath('grouped.endpoints.0.public_id', $endpoint->public_id)
         ->assertJsonPath('grouped.endpoints.0.path', '/api/v1/menu/items');
 });
@@ -70,11 +86,11 @@ it('searches systems by infrastructure metadata', function (): void {
         'name' => 'Payments',
         'slug' => 'payments',
         'description' => 'Core de pagos',
-        'gitlab_url' => 'https://gitlab.internal.local/core/payments',
+        'repository_url' => 'https://github.com/core/payments',
         'home_preview_url' => 'systems/previews/payments-home.png',
     ]);
 
-    $response = $this->getJson('/api/v1/search?q=gitlab.internal.local/core/payments');
+    $response = $this->getJson('/api/v1/search?q=github.com/core/payments');
 
     $response
         ->assertOk()
@@ -130,5 +146,6 @@ it('returns filters catalog', function (): void {
             'methods',
             'authentication_types',
             'artefact_types',
+            'document_types',
         ]);
 });

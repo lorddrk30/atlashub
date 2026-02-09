@@ -63,4 +63,9 @@ class Endpoint extends Model
     {
         return $this->hasMany(Artefact::class);
     }
+
+    public function documents(): HasMany
+    {
+        return $this->hasMany(Document::class);
+    }
 }

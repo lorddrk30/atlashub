@@ -110,7 +110,16 @@
             <div class="mt-3 flex flex-wrap gap-2">
               <button v-if="item.internal_url" class="rounded-lg border border-white/20 bg-white/[0.05] px-2.5 py-1 text-[11px] text-slate-200 transition hover:border-cyan-300/50" @click="openUrl(item.internal_url)">Dominio interno</button>
               <button v-if="item.public_url" class="rounded-lg border border-white/20 bg-white/[0.05] px-2.5 py-1 text-[11px] text-slate-200 transition hover:border-cyan-300/50" @click="openUrl(item.public_url)">Dominio publico</button>
-              <button v-if="item.gitlab_url" class="rounded-lg border border-white/20 bg-white/[0.05] px-2.5 py-1 text-[11px] text-slate-200 transition hover:border-cyan-300/50" @click="openUrl(item.gitlab_url)">GitLab</button>
+              <button
+                v-if="item.repository_url || item.gitlab_url"
+                class="rounded-lg border border-white/20 bg-white/[0.05] px-2.5 py-1 text-[11px] text-slate-200 transition hover:border-cyan-300/50"
+                @click="openUrl(item.repository_url || item.gitlab_url)"
+              >
+                Repositorio
+              </button>
+              <button class="rounded-lg border border-cyan-300/40 bg-cyan-300/10 px-2.5 py-1 text-[11px] text-cyan-100 transition hover:border-cyan-300/70" @click="goToSystem(item.id)">
+                Ver sistema
+              </button>
             </div>
           </template>
 
@@ -127,6 +136,15 @@
             <p class="mt-3 text-sm text-slate-300"><span class="rounded-full border border-cyan-300/30 bg-cyan-300/10 px-2 py-0.5 text-[11px] font-semibold text-cyan-100">{{ item.method }}</span></p>
             <p class="mt-2 text-sm text-slate-300">{{ shortText(item.path, 62) }}</p>
             <button class="mt-4 rounded-xl border border-white/20 bg-white/[0.05] px-3 py-2 text-xs text-white transition hover:border-cyan-300/50 hover:bg-cyan-300/15" @click="goToEndpoint(item.public_id)">Abrir mini swagger</button>
+          </template>
+
+          <template v-else-if="section.key === 'documents'">
+            <p class="text-[11px] uppercase tracking-[0.22em] text-cyan-200/75">Documento</p>
+            <h3 class="mt-2 text-lg font-semibold text-white">{{ item.title }}</h3>
+            <p class="mt-3 text-sm text-slate-300">{{ shortText(item.description) }}</p>
+            <p class="mt-2 text-xs uppercase tracking-wider text-slate-400">{{ item.type }}</p>
+            <p class="mt-1 text-xs text-slate-400">{{ item.system?.name || 'Sistema sin definir' }}</p>
+            <button class="mt-4 rounded-xl border border-white/20 bg-white/[0.05] px-3 py-2 text-xs text-white transition hover:border-cyan-300/50 hover:bg-cyan-300/15" @click="goToSystem(item.system_id)">Ver manuales</button>
           </template>
 
           <template v-else>
@@ -160,6 +178,7 @@ const sections = computed(() => [
   { key: 'systems', label: 'Sistemas', items: store.results.grouped.systems || [] },
   { key: 'modules', label: 'Modulos', items: store.results.grouped.modules || [] },
   { key: 'endpoints', label: 'Endpoints', items: store.results.grouped.endpoints || [] },
+  { key: 'documents', label: 'Documentos', items: store.results.grouped.documents || [] },
   { key: 'artefacts', label: 'Artefactos', items: store.results.grouped.artefacts || [] },
 ]);
 
@@ -232,6 +251,14 @@ const goToEndpoint = (publicId) => {
   }
 
   router.push({ name: 'endpoint-detail', params: { publicId }, query: route.query });
+};
+
+const goToSystem = (systemId) => {
+  if (!systemId) {
+    return;
+  }
+
+  router.push({ name: 'system-detail', params: { systemId }, query: route.query });
 };
 
 const openUrl = (url) => {

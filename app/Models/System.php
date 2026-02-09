@@ -22,6 +22,7 @@ class System extends Model
         'public_url',
         'responsibles',
         'user_areas',
+        'repository_url',
         'gitlab_url',
         'home_preview_url',
     ];
@@ -47,5 +48,10 @@ class System extends Model
     public function artefacts(): HasMany
     {
         return $this->hasMany(Artefact::class);
+    }
+
+    public function documents(): HasMany
+    {
+        return $this->hasMany(Document::class);
     }
 }

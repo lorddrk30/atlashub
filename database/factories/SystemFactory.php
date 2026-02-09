@@ -28,7 +28,7 @@ class SystemFactory extends Factory
                 ['Operaciones', 'Comercial', 'Atencion a cliente', 'Finanzas', 'Producto'],
                 rand(1, 3)
             ),
-            'gitlab_url' => fake()->optional()->url(),
+            'repository_url' => fake()->optional()->url(),
             'home_preview_url' => fake()->optional()->imageUrl(1280, 720, 'business'),
         ];
     }
