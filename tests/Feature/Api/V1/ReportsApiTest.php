@@ -107,3 +107,19 @@ it('generates report pdf document', function (): void {
     expect((string) $response->headers->get('content-type'))->toContain('application/pdf');
     expect((string) $response->headers->get('content-disposition'))->toContain('inline;');
 });
+
+it('includes draft systems in report summary tables', function (): void {
+    $draftSystem = System::factory()->create([
+        'name' => 'Nomina Interna',
+        'slug' => 'nomina-interna',
+        'status' => 'draft',
+    ]);
+
+    $response = $this->getJson('/api/v1/reports/summary?system_status=draft');
+
+    $response
+        ->assertOk()
+        ->assertJsonPath('kpis.systems', 1)
+        ->assertJsonPath('tables.systems.0.id', $draftSystem->id)
+        ->assertJsonPath('tables.systems.0.status', 'draft');
+});

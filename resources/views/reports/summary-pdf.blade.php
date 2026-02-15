@@ -5,333 +5,306 @@
         <title>{{ $title }}</title>
         <style>
             @page {
-                margin: 105px 42px 70px 42px;
+                margin: 90px 36px 58px 36px;
             }
 
             :root {
-                --bg: {{ $theme === 'light' ? '#f8fafc' : '#060f23' }};
-                --panel: {{ $theme === 'light' ? '#ffffff' : '#0b1831' }};
+                --paper: {{ $theme === 'light' ? '#ffffff' : '#0b1324' }};
+                --canvas: {{ $theme === 'light' ? '#f1f5f9' : '#061024' }};
                 --text: {{ $theme === 'light' ? '#0f172a' : '#e2e8f0' }};
                 --muted: {{ $theme === 'light' ? '#475569' : '#94a3b8' }};
-                --border: {{ $theme === 'light' ? '#cbd5e1' : '#29405d' }};
-                --accent: {{ $theme === 'light' ? '#0284c7' : '#22d3ee' }};
-                --accent-soft: {{ $theme === 'light' ? '#0369a1' : '#34d399' }};
+                --line: {{ $theme === 'light' ? '#cbd5e1' : '#29405d' }};
+                --accent: {{ $theme === 'light' ? '#0369a1' : '#22d3ee' }};
+                --accent-soft: {{ $theme === 'light' ? '#0f766e' : '#34d399' }};
+            }
+
+            * {
+                box-sizing: border-box;
             }
 
             body {
-                font-family: DejaVu Sans, Arial, sans-serif;
-                font-size: 11px;
-                color: var(--text);
-                background: var(--bg);
                 margin: 0;
+                font-family: DejaVu Sans, Arial, sans-serif;
+                font-size: 10.6px;
+                color: var(--text);
+                background: var(--canvas);
+                line-height: 1.45;
             }
 
             header {
                 position: fixed;
-                top: -80px;
+                top: -72px;
                 left: 0;
                 right: 0;
-                height: 60px;
-                border-bottom: 1px solid var(--border);
-                color: var(--muted);
-                font-size: 10px;
+                height: 56px;
+                border-bottom: 1px solid var(--line);
+                padding-bottom: 8px;
             }
 
             footer {
                 position: fixed;
-                bottom: -48px;
+                bottom: -42px;
                 left: 0;
                 right: 0;
-                height: 30px;
-                border-top: 1px solid var(--border);
+                height: 24px;
+                border-top: 1px solid var(--line);
                 color: var(--muted);
-                font-size: 10px;
+                font-size: 9px;
+                padding-top: 6px;
             }
 
-            .header-left,
-            .footer-left {
+            .left {
                 float: left;
             }
 
-            .header-right,
-            .footer-right {
+            .right {
                 float: right;
                 text-align: right;
             }
 
-            .pagenum::before {
+            .pagenum:before {
                 content: counter(page);
             }
 
-            .section {
-                margin-bottom: 22px;
-            }
-
             .cover {
-                background: var(--panel);
-                border: 1px solid var(--border);
-                border-radius: 16px;
-                padding: 26px;
-                min-height: 420px;
-                page-break-after: always;
+                background: var(--paper);
+                border: 1px solid var(--line);
+                border-radius: 14px;
+                padding: 22px;
+                margin-bottom: 14px;
             }
 
-            .logo {
-                width: 78px;
-                height: 78px;
-            }
-
-            .kicker {
+            .brand {
+                margin: 0;
                 color: var(--accent);
                 text-transform: uppercase;
                 letter-spacing: 0.18em;
-                font-size: 10px;
-                margin-top: 20px;
+                font-size: 9px;
+                font-weight: 700;
             }
 
             h1 {
-                font-size: 34px;
-                line-height: 1.08;
-                margin: 10px 0 8px;
+                margin: 8px 0 8px;
+                font-size: 28px;
+                line-height: 1.12;
             }
 
             h2 {
-                font-size: 20px;
-                margin: 0 0 14px;
+                margin: 0 0 12px;
+                color: var(--accent);
+                font-size: 16px;
             }
 
             h3 {
-                font-size: 14px;
-                margin: 0 0 10px;
+                margin: 0 0 8px;
+                font-size: 12px;
+                color: var(--accent-soft);
             }
 
             .muted {
                 color: var(--muted);
             }
 
-            .index {
-                background: var(--panel);
-                border: 1px solid var(--border);
-                border-radius: 14px;
-                padding: 22px;
-                page-break-after: always;
+            .section {
+                margin-bottom: 12px;
+                background: var(--paper);
+                border: 1px solid var(--line);
+                border-radius: 12px;
+                padding: 14px;
             }
 
-            .index-row {
-                border-bottom: 1px dashed var(--border);
-                padding: 8px 0;
+            .kpi-table {
+                width: 100%;
+                border-collapse: separate;
+                border-spacing: 8px;
+                margin: 6px -8px 0;
             }
 
-            .index-label {
-                float: left;
-            }
-
-            .index-page {
-                float: right;
-                color: var(--muted);
-            }
-
-            .panel {
-                background: var(--panel);
-                border: 1px solid var(--border);
-                border-radius: 14px;
-                padding: 16px;
-            }
-
-            .kpi-grid {
-                margin-top: 14px;
-            }
-
-            .kpi-card {
-                width: 48%;
-                display: inline-block;
-                margin-bottom: 10px;
-                margin-right: 2%;
-                border: 1px solid var(--border);
+            .kpi-table td {
+                width: 25%;
+                border: 1px solid var(--line);
+                background: var(--canvas);
                 border-radius: 10px;
-                padding: 10px;
-                background: var(--bg);
+                padding: 9px;
                 vertical-align: top;
             }
 
             .kpi-label {
                 margin: 0;
-                font-size: 10px;
-                text-transform: uppercase;
-                letter-spacing: 0.08em;
                 color: var(--muted);
+                text-transform: uppercase;
+                letter-spacing: 0.07em;
+                font-size: 8.5px;
             }
 
             .kpi-value {
-                margin: 6px 0 0;
-                font-size: 24px;
+                margin: 5px 0 0;
                 color: var(--accent);
-                font-weight: bold;
+                font-size: 22px;
+                font-weight: 700;
             }
 
-            .chart {
-                margin-bottom: 18px;
-                border: 1px solid var(--border);
+            .chart-box {
+                border: 1px solid var(--line);
                 border-radius: 10px;
-                padding: 10px;
-                background: var(--bg);
+                background: var(--canvas);
+                padding: 8px;
+                margin-bottom: 10px;
             }
 
-            .chart img {
+            .chart-box img {
                 width: 100%;
-                max-height: 260px;
+                max-height: 220px;
                 object-fit: contain;
-            }
-
-            .table-title {
-                margin: 0 0 8px;
-                color: var(--accent-soft);
-                font-size: 13px;
             }
 
             table {
                 width: 100%;
                 border-collapse: collapse;
-                margin-bottom: 14px;
-                font-size: 10px;
+                margin-bottom: 12px;
+                font-size: 9.5px;
             }
 
-            th, td {
-                border: 1px solid var(--border);
-                padding: 6px 7px;
+            th,
+            td {
+                border: 1px solid var(--line);
+                padding: 5px 6px;
                 text-align: left;
                 vertical-align: top;
             }
 
             th {
-                background: var(--bg);
+                background: var(--canvas);
                 color: var(--accent);
                 text-transform: uppercase;
-                font-size: 9px;
-                letter-spacing: 0.06em;
+                letter-spacing: 0.05em;
+                font-size: 8px;
+            }
+
+            .tag {
+                display: inline-block;
+                padding: 2px 7px;
+                border-radius: 999px;
+                border: 1px solid var(--line);
+                font-size: 8.5px;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+
+            .tag-draft {
+                color: #b45309;
+                border-color: #f59e0b;
+                background: #fffbeb;
+            }
+
+            .tag-published {
+                color: #166534;
+                border-color: #22c55e;
+                background: #f0fdf4;
+            }
+
+            .tag-discarded {
+                color: #991b1b;
+                border-color: #ef4444;
+                background: #fef2f2;
             }
 
             .page-break {
                 page-break-after: always;
             }
-
-            .legend {
-                margin-top: 6px;
-                color: var(--muted);
-                font-size: 10px;
-            }
         </style>
     </head>
     <body>
         <header>
-            <div class="header-left">
-                <strong>AtlasHub</strong><br>
-                Reporte generado: {{ $generatedAt }}
+            <div class="left">
+                <strong>AtlasHub Reportes</strong><br>
+                <span class="muted">Generado: {{ $generatedAt }}</span>
             </div>
-            <div class="header-right">
+            <div class="right">
                 {{ $title }}<br>
-                Tema: {{ strtoupper($theme) }}
+                <span class="muted">Tema {{ strtoupper($theme) }}</span>
             </div>
         </header>
 
         <footer>
-            <div class="footer-left">AtlasHub Reports</div>
-            <div class="footer-right">Pagina <span class="pagenum"></span></div>
+            <div class="left">AtlasHub</div>
+            <div class="right">Pagina <span class="pagenum"></span></div>
         </footer>
 
         <main>
             <section class="cover">
-                <img src="{{ $logoDataUri }}" alt="AtlasHub" class="logo">
-                <p class="kicker">Reporte AtlasHub</p>
+                <p class="brand">Reporte ejecutivo</p>
                 <h1>{{ $title }}</h1>
-                <p class="muted">Generado el {{ $generatedAt }}</p>
-                <p style="margin-top: 24px; line-height: 1.7;">
-                    Este documento resume el estado del catalogo tecnico de AtlasHub: sistemas, modulos, endpoints y artefactos.
-                    Incluye indicadores clave, visualizaciones de distribucion y tablas de referencia para analisis operativo.
+                <p class="muted">
+                    Este reporte consolida sistemas, modulos, endpoints y artefactos. Incluye sistemas en estado borrador, publicado y descartado.
                 </p>
-                <div style="margin-top: 24px; border-top: 1px solid var(--border); padding-top: 16px;">
-                    <strong>Filtros aplicados</strong>
-                    <p class="muted" style="line-height: 1.7;">
-                        Sistema: {{ $summary['filters_applied']['system_id'] ?? 'Todos' }} |
-                        Modulo: {{ $summary['filters_applied']['module_id'] ?? 'Todos' }} |
-                        Estado: {{ $summary['filters_applied']['status'] ?? 'Todos' }} |
-                        Fecha desde: {{ $summary['filters_applied']['date_from'] ?? 'N/A' }} |
-                        Fecha hasta: {{ $summary['filters_applied']['date_to'] ?? 'N/A' }}
-                    </p>
-                </div>
+                <p class="muted" style="margin-top: 12px;">
+                    Filtros: sistema={{ $summary['filters_applied']['system_id'] ?? 'todos' }} |
+                    modulo={{ $summary['filters_applied']['module_id'] ?? 'todos' }} |
+                    estado sistema={{ $summary['filters_applied']['system_status'] ?? 'todos' }} |
+                    estado endpoint={{ $summary['filters_applied']['status'] ?? 'todos' }} |
+                    desde={{ $summary['filters_applied']['date_from'] ?? 'N/A' }} |
+                    hasta={{ $summary['filters_applied']['date_to'] ?? 'N/A' }}
+                </p>
             </section>
 
-            <section class="index">
-                <h2>Indice</h2>
-                <div class="index-row">
-                    <span class="index-label">1. Resumen ejecutivo</span>
-                    <span class="index-page">3</span>
-                    <div style="clear: both;"></div>
-                </div>
-                <div class="index-row">
-                    <span class="index-label">2. Graficas de distribucion</span>
-                    <span class="index-page">4</span>
-                    <div style="clear: both;"></div>
-                </div>
-                <div class="index-row">
-                    <span class="index-label">3. Tablas detalladas</span>
-                    <span class="index-page">5</span>
-                    <div style="clear: both;"></div>
-                </div>
-            </section>
-
-            <section class="section panel page-break">
+            <section class="section page-break">
                 <h2>Resumen ejecutivo</h2>
-                <p class="muted" style="line-height: 1.7;">{{ $summary['executive_summary'] }}</p>
+                <p class="muted" style="margin-top: 0;">{{ $summary['executive_summary'] }}</p>
 
-                <div class="kpi-grid">
-                    <article class="kpi-card">
-                        <p class="kpi-label">Total sistemas</p>
-                        <p class="kpi-value">{{ $summary['kpis']['systems'] }}</p>
-                    </article>
-                    <article class="kpi-card">
-                        <p class="kpi-label">Total modulos</p>
-                        <p class="kpi-value">{{ $summary['kpis']['modules'] }}</p>
-                    </article>
-                    <article class="kpi-card">
-                        <p class="kpi-label">Total endpoints</p>
-                        <p class="kpi-value">{{ $summary['kpis']['endpoints'] }}</p>
-                    </article>
-                    <article class="kpi-card">
-                        <p class="kpi-label">Total artefactos</p>
-                        <p class="kpi-value">{{ $summary['kpis']['artefacts'] }}</p>
-                    </article>
+                <table class="kpi-table">
+                    <tr>
+                        <td>
+                            <p class="kpi-label">Sistemas</p>
+                            <p class="kpi-value">{{ $summary['kpis']['systems'] }}</p>
+                        </td>
+                        <td>
+                            <p class="kpi-label">Modulos</p>
+                            <p class="kpi-value">{{ $summary['kpis']['modules'] }}</p>
+                        </td>
+                        <td>
+                            <p class="kpi-label">Endpoints</p>
+                            <p class="kpi-value">{{ $summary['kpis']['endpoints'] }}</p>
+                        </td>
+                        <td>
+                            <p class="kpi-label">Artefactos</p>
+                            <p class="kpi-value">{{ $summary['kpis']['artefacts'] }}</p>
+                        </td>
+                    </tr>
+                </table>
+
+                <h3>Distribucion por estado de sistema</h3>
+                <div class="chart-box">
+                    <img src="{{ $chartImages['systems_by_status'] }}" alt="Sistemas por estado">
                 </div>
             </section>
 
-            <section class="section panel page-break">
-                <h2>Graficas de distribucion</h2>
-                <div class="chart">
+            <section class="section page-break">
+                <h2>Graficas operativas</h2>
+                <div class="chart-box">
                     <img src="{{ $chartImages['endpoints_by_system'] }}" alt="Endpoints por sistema">
-                    <p class="legend">Distribucion de endpoints agrupados por sistema.</p>
                 </div>
-                <div class="chart">
+                <div class="chart-box">
                     <img src="{{ $chartImages['endpoints_by_module'] }}" alt="Endpoints por modulo">
-                    <p class="legend">Distribucion de endpoints por modulo.</p>
                 </div>
-                <div class="chart">
+                <div class="chart-box">
                     <img src="{{ $chartImages['artefacts_by_type'] }}" alt="Artefactos por tipo">
-                    <p class="legend">Participacion de artefactos segun su tipo.</p>
                 </div>
-                <div class="chart">
+                <div class="chart-box">
                     <img src="{{ $chartImages['endpoints_by_method'] }}" alt="Endpoints por metodo HTTP">
-                    <p class="legend">Frecuencia de endpoints por metodo HTTP.</p>
                 </div>
             </section>
 
-            <section class="section panel">
+            <section class="section">
                 <h2>Tablas detalladas</h2>
 
-                <h3 class="table-title">Sistemas</h3>
+                <h3>Sistemas (incluye borradores)</h3>
                 <table>
                     <thead>
                         <tr>
                             <th>Sistema</th>
+                            <th>Slug</th>
+                            <th>Estado</th>
                             <th>Endpoints</th>
                         </tr>
                     </thead>
@@ -339,17 +312,22 @@
                         @forelse ($summary['tables']['systems'] as $row)
                             <tr>
                                 <td>{{ $row['name'] }}</td>
+                                <td>{{ $row['slug'] }}</td>
+                                <td>
+                                    @php($status = $row['status'])
+                                    <span class="tag tag-{{ $status }}">{{ $status }}</span>
+                                </td>
                                 <td>{{ $row['endpoint_count'] }}</td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="2">Sin datos.</td>
+                                <td colspan="4">Sin datos.</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
 
-                <h3 class="table-title">Modulos</h3>
+                <h3>Modulos</h3>
                 <table>
                     <thead>
                         <tr>
@@ -375,7 +353,7 @@
                     </tbody>
                 </table>
 
-                <h3 class="table-title">Endpoints (muestra)</h3>
+                <h3>Endpoints (muestra)</h3>
                 <table>
                     <thead>
                         <tr>
@@ -403,7 +381,7 @@
                     </tbody>
                 </table>
 
-                <h3 class="table-title">Artefactos (muestra)</h3>
+                <h3>Artefactos (muestra)</h3>
                 <table>
                     <thead>
                         <tr>
@@ -434,4 +412,3 @@
         </main>
     </body>
 </html>
-

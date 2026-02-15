@@ -14,22 +14,24 @@ class ReportRepository
     {
         $endpointQuery = $this->endpointBaseQuery($filters);
         $artefactQuery = $this->artefactBaseQuery($filters);
+        $systemsQuery = $this->systemsBaseQuery($filters);
 
         return [
             'kpis' => [
-                'systems' => (clone $endpointQuery)->distinct('s.id')->count('s.id'),
+                'systems' => (clone $systemsQuery)->count(),
                 'modules' => (clone $endpointQuery)->distinct('m.id')->count('m.id'),
                 'endpoints' => (clone $endpointQuery)->count('e.id'),
                 'artefacts' => (clone $artefactQuery)->count('a.id'),
             ],
             'charts' => [
+                'systems_by_status' => $this->systemsByStatus($filters),
                 'endpoints_by_system' => $this->endpointsBySystem($endpointQuery),
                 'endpoints_by_module' => $this->endpointsByModule($endpointQuery),
                 'artefacts_by_type' => $this->artefactsByType($artefactQuery),
                 'endpoints_by_method' => $this->endpointsByMethod($endpointQuery),
             ],
             'tables' => [
-                'systems' => $this->systemsTable($endpointQuery),
+                'systems' => $this->systemsTable($systemsQuery),
                 'modules' => $this->modulesTable($endpointQuery),
                 'endpoints' => $this->endpointsTable($endpointQuery),
                 'artefacts' => $this->artefactsTable($artefactQuery),
@@ -50,6 +52,10 @@ class ReportRepository
 
         if ($filters->moduleId) {
             $query->where('e.module_id', $filters->moduleId);
+        }
+
+        if ($filters->systemStatus) {
+            $query->where('s.status', $filters->systemStatus);
         }
 
         if ($filters->resolvedEndpointStatuses()) {
@@ -82,6 +88,10 @@ class ReportRepository
             $query->whereRaw('COALESCE(a.module_id, e.module_id) = ?', [$filters->moduleId]);
         }
 
+        if ($filters->systemStatus) {
+            $query->where('s.status', $filters->systemStatus);
+        }
+
         if ($filters->resolvedEndpointStatuses()) {
             $query->whereIn('e.status', $filters->resolvedEndpointStatuses());
         }
@@ -95,6 +105,52 @@ class ReportRepository
         }
 
         return $query;
+    }
+
+    private function systemsBaseQuery(ReportFiltersData $filters): Builder
+    {
+        $query = DB::table('systems as s')
+            ->select('s.id', 's.name', 's.slug', 's.status', 's.updated_at');
+
+        if ($filters->systemId) {
+            $query->where('s.id', $filters->systemId);
+        }
+
+        if ($filters->moduleId) {
+            $query->whereExists(function ($subQuery) use ($filters): void {
+                $subQuery
+                    ->selectRaw('1')
+                    ->from('modules as m')
+                    ->whereColumn('m.system_id', 's.id')
+                    ->where('m.id', $filters->moduleId);
+            });
+        }
+
+        if ($filters->systemStatus) {
+            $query->where('s.status', $filters->systemStatus);
+        }
+
+        return $query;
+    }
+
+    private function systemsByStatus(ReportFiltersData $filters): array
+    {
+        $rows = (clone $this->systemsBaseQuery($filters))
+            ->select('s.status', DB::raw('COUNT(s.id) as total'))
+            ->groupBy('s.status')
+            ->pluck('total', 'status');
+
+        return collect([
+            'draft' => 'Borrador',
+            'published' => 'Publicado',
+            'discarded' => 'Descartado',
+        ])
+            ->map(fn (string $label, string $status): array => [
+                'label' => $label,
+                'value' => (int) ($rows[$status] ?? 0),
+            ])
+            ->values()
+            ->all();
     }
 
     private function endpointsBySystem(Builder $query): array
@@ -169,13 +225,19 @@ class ReportRepository
     private function systemsTable(Builder $query): array
     {
         return (clone $query)
-            ->select('s.id', 's.name', DB::raw('COUNT(e.id) as endpoint_count'))
-            ->groupBy('s.id', 's.name')
-            ->orderByDesc('endpoint_count')
+            ->leftJoin('modules as m', 'm.system_id', '=', 's.id')
+            ->leftJoin('endpoints as e', function ($join): void {
+                $join->on('e.module_id', '=', 'm.id');
+            })
+            ->select('s.id', 's.name', 's.slug', 's.status', DB::raw('COUNT(e.id) as endpoint_count'))
+            ->groupBy('s.id', 's.name', 's.slug', 's.status')
+            ->orderBy('s.name')
             ->get()
             ->map(fn ($row): array => [
                 'id' => (int) $row->id,
                 'name' => (string) $row->name,
+                'slug' => (string) $row->slug,
+                'status' => (string) $row->status,
                 'endpoint_count' => (int) $row->endpoint_count,
             ])
             ->values()
@@ -247,6 +309,11 @@ class ReportRepository
         return [
             'systems' => DB::table('systems')->select('id', 'name')->orderBy('name')->get()->toArray(),
             'modules' => DB::table('modules')->select('id', 'system_id', 'name')->orderBy('name')->get()->toArray(),
+            'system_statuses' => [
+                ['value' => 'draft', 'label' => 'Borrador'],
+                ['value' => 'published', 'label' => 'Publicado'],
+                ['value' => 'discarded', 'label' => 'Descartado'],
+            ],
             'statuses' => [
                 ['value' => 'active', 'label' => 'Activo'],
                 ['value' => 'deprecated', 'label' => 'Deprecado'],

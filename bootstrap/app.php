@@ -5,6 +5,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Session\TokenMismatchException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -23,6 +24,14 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (\Throwable $exception, Request $request) {
+            if ($exception instanceof TokenMismatchException && ($request->expectsJson() || $request->is('api/*'))) {
+                return response()->json([
+                    'message' => 'Tu sesion expiro. Recarga la pagina y vuelve a intentar.',
+                    'code' => 'SESSION_EXPIRED',
+                    'action' => 'refresh_page',
+                ], 419);
+            }
+
             if (! DatabaseConnectionDetector::isConnectionIssue($exception)) {
                 return null;
             }

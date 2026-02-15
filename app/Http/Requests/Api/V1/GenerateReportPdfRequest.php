@@ -17,6 +17,7 @@ class GenerateReportPdfRequest extends FormRequest
         return [
             'system_id' => ['nullable', 'integer', 'exists:systems,id'],
             'module_id' => ['nullable', 'integer', 'exists:modules,id'],
+            'system_status' => ['nullable', 'string', Rule::in(['draft', 'published', 'discarded'])],
             'status' => ['nullable', 'string', Rule::in(['active', 'deprecated', 'archived'])],
             'date_from' => ['nullable', 'date_format:Y-m-d'],
             'date_to' => ['nullable', 'date_format:Y-m-d', 'after_or_equal:date_from'],
@@ -26,4 +27,3 @@ class GenerateReportPdfRequest extends FormRequest
         ];
     }
 }
-

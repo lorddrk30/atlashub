@@ -8,6 +8,8 @@ use App\Domain\Reports\Services\ReportService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\GenerateReportPdfRequest;
 use App\Http\Requests\Api\V1\ReportSummaryRequest;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class ReportsController extends Controller
 {
@@ -21,18 +23,31 @@ class ReportsController extends Controller
 
     public function generatePdf(GenerateReportPdfRequest $request, ReportService $service)
     {
-        $filters = ReportFiltersData::fromRequest($request);
-        $options = ReportPdfOptionsData::fromRequest($request);
-        $pdf = $service->buildPdf($filters, $options);
-        $filename = 'atlashub-reporte-'.now()->format('Ymd-His').'.pdf';
+        try {
+            $filters = ReportFiltersData::fromRequest($request);
+            $options = ReportPdfOptionsData::fromRequest($request);
+            $pdf = $service->buildPdf($filters, $options);
+            $filename = 'atlashub-reporte-'.now()->format('Ymd-His').'.pdf';
 
-        if ($options->disposition === 'inline') {
-            return response($pdf->output(), 200, [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="'.$filename.'"',
+            if ($options->disposition === 'inline') {
+                return response($pdf->output(), 200, [
+                    'Content-Type' => 'application/pdf',
+                    'Content-Disposition' => 'inline; filename="'.$filename.'"',
+                ]);
+            }
+
+            return $pdf->download($filename);
+        } catch (Throwable $exception) {
+            Log::error('No fue posible generar el reporte PDF.', [
+                'error' => $exception->getMessage(),
+                'trace' => $exception->getTraceAsString(),
             ]);
-        }
 
-        return $pdf->download($filename);
+            return response()->json([
+                'message' => 'No se pudo generar el PDF en este momento.',
+                'code' => 'PDF_GENERATION_ERROR',
+                'action' => 'retry_later',
+            ], 500);
+        }
     }
 }

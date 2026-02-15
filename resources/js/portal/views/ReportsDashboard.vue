@@ -33,8 +33,12 @@
           <option v-for="item in moduleOptions" :key="item.id" :value="String(item.id)">{{ item.name }}</option>
         </select>
         <select v-model="filters.status" class="rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 text-sm text-slate-200 outline-none focus:border-cyan-300/70">
-          <option value="">Estado</option>
+          <option value="">Estado endpoint</option>
           <option v-for="item in filterCatalog.statuses" :key="item.value" :value="item.value">{{ item.label }}</option>
+        </select>
+        <select v-model="filters.system_status" class="rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 text-sm text-slate-200 outline-none focus:border-cyan-300/70">
+          <option value="">Estado sistema</option>
+          <option v-for="item in filterCatalog.system_statuses" :key="item.value" :value="item.value">{{ item.label }}</option>
         </select>
         <input v-model="filters.date_from" type="date" class="rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 text-sm text-slate-200 outline-none focus:border-cyan-300/70">
         <input v-model="filters.date_to" type="date" class="rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 text-sm text-slate-200 outline-none focus:border-cyan-300/70">
@@ -195,12 +199,13 @@ const filters = reactive({
   system_id: '',
   module_id: '',
   status: '',
+  system_status: '',
   date_from: '',
   date_to: '',
-  theme: 'dark',
+  theme: 'light',
 });
 
-const filterCatalog = computed(() => summary.value?.filters || { systems: [], modules: [], statuses: [] });
+const filterCatalog = computed(() => summary.value?.filters || { systems: [], modules: [], statuses: [], system_statuses: [] });
 const moduleOptions = computed(() => {
   if (!filters.system_id) {
     return filterCatalog.value.modules || [];
@@ -225,10 +230,67 @@ const activeQueryParams = () => {
   if (filters.system_id) params.set('system_id', filters.system_id);
   if (filters.module_id) params.set('module_id', filters.module_id);
   if (filters.status) params.set('status', filters.status);
+  if (filters.system_status) params.set('system_status', filters.system_status);
   if (filters.date_from) params.set('date_from', filters.date_from);
   if (filters.date_to) params.set('date_to', filters.date_to);
 
   return params;
+};
+
+const csrfToken = () => document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+const cookieValue = (name) => {
+  const cookie = document.cookie
+    .split('; ')
+    .find((entry) => entry.startsWith(`${name}=`));
+  if (!cookie) return '';
+  return decodeURIComponent(cookie.slice(name.length + 1));
+};
+
+const requestHeaders = (accept = 'application/json') => {
+  const headers = {
+    Accept: accept,
+    'X-Requested-With': 'XMLHttpRequest',
+  };
+  const csrf = csrfToken();
+  const xsrf = cookieValue('XSRF-TOKEN');
+
+  if (csrf) headers['X-CSRF-TOKEN'] = csrf;
+  if (xsrf) headers['X-XSRF-TOKEN'] = xsrf;
+
+  return headers;
+};
+
+const readableErrorMessage = async (response, fallbackMessage) => {
+  if (response.status === 419) {
+    return 'Tu sesion expiro. Recarga la pagina y vuelve a intentar generar el reporte.';
+  }
+
+  if (response.status === 422) {
+    try {
+      const payload = await response.json();
+      const firstValidationError = Object.values(payload?.errors || {}).flat()[0];
+      return firstValidationError
+        ? `Revisa los filtros del reporte: ${firstValidationError}`
+        : 'Hay filtros invalidos. Corrige los campos y vuelve a intentar.';
+    } catch {
+      return 'Hay filtros invalidos. Corrige los campos y vuelve a intentar.';
+    }
+  }
+
+  if (response.status >= 500) {
+    return 'El servidor no pudo generar el reporte. Intenta de nuevo en unos minutos.';
+  }
+
+  try {
+    const payload = await response.json();
+    if (payload?.message) {
+      return payload.message;
+    }
+  } catch {
+    // no-op
+  }
+
+  return fallbackMessage;
 };
 
 const buildBarChart = (canvasRef, dataset, label, color) => {
@@ -332,10 +394,12 @@ const loadSummary = async () => {
 
   try {
     const params = activeQueryParams();
-    const response = await fetch(`/api/v1/reports/summary?${params.toString()}`);
+    const response = await fetch(`/api/v1/reports/summary?${params.toString()}`, {
+      headers: requestHeaders('application/json'),
+    });
 
     if (!response.ok) {
-      throw new Error('No fue posible cargar el resumen de reportes.');
+      throw new Error(await readableErrorMessage(response, 'No fue posible cargar el resumen de reportes.'));
     }
 
     summary.value = await response.json();
@@ -352,14 +416,16 @@ const resetFilters = async () => {
   filters.system_id = '';
   filters.module_id = '';
   filters.status = '';
+  filters.system_status = '';
   filters.date_from = '';
   filters.date_to = '';
-  filters.theme = 'dark';
+  filters.theme = 'light';
   await loadSummary();
 };
 
 const generatePdf = async (disposition) => {
   generatingPdf.value = true;
+  errorMessage.value = '';
 
   try {
     const payload = {
@@ -372,14 +438,14 @@ const generatePdf = async (disposition) => {
     const response = await fetch('/api/v1/reports/generate-pdf', {
       method: 'POST',
       headers: {
+        ...requestHeaders('application/pdf, application/json'),
         'Content-Type': 'application/json',
-        Accept: 'application/pdf',
       },
       body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
-      throw new Error('No se pudo generar el PDF.');
+      throw new Error(await readableErrorMessage(response, 'No se pudo generar el PDF.'));
     }
 
     const blob = await response.blob();

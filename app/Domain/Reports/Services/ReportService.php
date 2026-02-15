@@ -33,6 +33,7 @@ class ReportService
         $theme = in_array($options->theme, ['dark', 'light'], true) ? $options->theme : 'dark';
 
         $chartImages = [
+            'systems_by_status' => $this->buildBarChartDataUri($summary['charts']['systems_by_status'], 'Sistemas por estado', $theme),
             'endpoints_by_system' => $this->buildBarChartDataUri($summary['charts']['endpoints_by_system'], 'Endpoints por sistema', $theme),
             'endpoints_by_module' => $this->buildBarChartDataUri($summary['charts']['endpoints_by_module'], 'Endpoints por modulo', $theme),
             'artefacts_by_type' => $this->buildBarChartDataUri($summary['charts']['artefacts_by_type'], 'Artefactos por tipo', $theme),
@@ -56,7 +57,7 @@ class ReportService
         $endpoints = (int) ($kpis['endpoints'] ?? 0);
         $artefacts = (int) ($kpis['artefacts'] ?? 0);
 
-        return "AtlasHub registra {$systems} sistemas activos con {$modules} modulos, {$endpoints} endpoints documentados y {$artefacts} artefactos tecnicos.";
+        return "AtlasHub registra {$systems} sistemas (publicados, en borrador y descartados) con {$modules} modulos, {$endpoints} endpoints documentados y {$artefacts} artefactos tecnicos.";
     }
 
     private function buildBarChartDataUri(array $series, string $title, string $theme): string
