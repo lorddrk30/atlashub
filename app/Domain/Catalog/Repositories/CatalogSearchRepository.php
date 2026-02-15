@@ -22,15 +22,18 @@ class CatalogSearchRepository
             'slug',
             'description',
             'prod_server',
+            'prod_server_ip',
             'uat_server',
+            'uat_server_ip',
             'dev_server',
+            'dev_server_ip',
             'internal_url',
             'public_url',
             'responsibles',
             'user_areas',
             'repository_url',
             'home_preview_url',
-        ]);
+        ])->published();
 
         if ($filters->systemId) {
             $query->where('id', $filters->systemId);
@@ -44,8 +47,11 @@ class CatalogSearchRepository
                     ->orWhereRaw('LOWER(slug) LIKE ?', ["%{$needle}%"])
                     ->orWhereRaw('LOWER(description) LIKE ?', ["%{$needle}%"])
                     ->orWhereRaw('LOWER(prod_server) LIKE ?', ["%{$needle}%"])
+                    ->orWhereRaw('LOWER(prod_server_ip) LIKE ?', ["%{$needle}%"])
                     ->orWhereRaw('LOWER(uat_server) LIKE ?', ["%{$needle}%"])
+                    ->orWhereRaw('LOWER(uat_server_ip) LIKE ?', ["%{$needle}%"])
                     ->orWhereRaw('LOWER(dev_server) LIKE ?', ["%{$needle}%"])
+                    ->orWhereRaw('LOWER(dev_server_ip) LIKE ?', ["%{$needle}%"])
                     ->orWhereRaw('LOWER(internal_url) LIKE ?', ["%{$needle}%"])
                     ->orWhereRaw('LOWER(public_url) LIKE ?', ["%{$needle}%"])
                     ->orWhereRaw('LOWER(COALESCE(repository_url, gitlab_url)) LIKE ?', ["%{$needle}%"])
@@ -69,7 +75,8 @@ class CatalogSearchRepository
     {
         $query = Module::query()
             ->select(['id', 'system_id', 'name', 'slug', 'description'])
-            ->with('system:id,name,slug');
+            ->with('system:id,name,slug')
+            ->whereHas('system', fn ($systemQuery) => $systemQuery->published());
 
         if ($filters->systemId) {
             $query->where('system_id', $filters->systemId);
@@ -113,7 +120,8 @@ class CatalogSearchRepository
                 'updated_at',
             ])
             ->with(['module:id,system_id,name,slug', 'module.system:id,name,slug'])
-            ->where('status', 'published');
+            ->where('status', 'published')
+            ->whereHas('module.system', fn ($systemQuery) => $systemQuery->published());
 
         if ($filters->moduleId) {
             $query->where('module_id', $filters->moduleId);
@@ -174,7 +182,13 @@ class CatalogSearchRepository
                 'description',
                 'updated_at',
             ])
-            ->with(['system:id,name,slug', 'module:id,name,slug', 'endpoint:id,public_id,name,method,path']);
+            ->with(['system:id,name,slug', 'module:id,name,slug', 'endpoint:id,public_id,name,method,path'])
+            ->where(function ($subQuery): void {
+                $subQuery
+                    ->whereHas('system', fn ($systemQuery) => $systemQuery->published())
+                    ->orWhereHas('module.system', fn ($systemQuery) => $systemQuery->published())
+                    ->orWhereHas('endpoint.module.system', fn ($systemQuery) => $systemQuery->published());
+            });
 
         if ($filters->artefactType) {
             $query->where('type', $filters->artefactType);
@@ -250,7 +264,8 @@ class CatalogSearchRepository
                 'system:id,name,slug',
                 'module:id,system_id,name,slug',
                 'endpoint:id,public_id,module_id,name,method,path',
-            ]);
+            ])
+            ->whereHas('system', fn ($systemQuery) => $systemQuery->published());
 
         if ($filters->systemId) {
             $query->where('system_id', $filters->systemId);
@@ -292,6 +307,7 @@ class CatalogSearchRepository
     {
         return Endpoint::query()
             ->with(['module:id,system_id,name,slug,description', 'module.system:id,name,slug,description', 'artefacts'])
+            ->whereHas('module.system', fn ($systemQuery) => $systemQuery->published())
             ->where('public_id', $publicId)
             ->first();
     }
@@ -299,8 +315,12 @@ class CatalogSearchRepository
     public function filterData(): array
     {
         return [
-            'systems' => System::query()->select('id', 'name', 'slug')->orderBy('name')->get(),
-            'modules' => Module::query()->select('id', 'system_id', 'name', 'slug')->orderBy('name')->get(),
+            'systems' => System::query()->published()->select('id', 'name', 'slug')->orderBy('name')->get(),
+            'modules' => Module::query()
+                ->select('id', 'system_id', 'name', 'slug')
+                ->whereHas('system', fn ($systemQuery) => $systemQuery->published())
+                ->orderBy('name')
+                ->get(),
             'methods' => Endpoint::METHODS,
             'authentication_types' => Endpoint::AUTH_TYPES,
             'artefact_types' => Artefact::TYPES,

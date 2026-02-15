@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -11,13 +12,19 @@ class System extends Model
 {
     use HasFactory;
 
+    public const STATUSES = ['draft', 'published', 'discarded'];
+
     protected $fillable = [
         'name',
         'slug',
+        'status',
         'description',
         'prod_server',
+        'prod_server_ip',
         'uat_server',
+        'uat_server_ip',
         'dev_server',
+        'dev_server_ip',
         'internal_url',
         'public_url',
         'responsibles',
@@ -33,6 +40,11 @@ class System extends Model
             'responsibles' => 'array',
             'user_areas' => 'array',
         ];
+    }
+
+    public function scopePublished(Builder $query): Builder
+    {
+        return $query->where('status', 'published');
     }
 
     public function modules(): HasMany

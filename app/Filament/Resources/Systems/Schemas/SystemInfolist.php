@@ -16,8 +16,11 @@ class SystemInfolist
                 TextEntry::make('slug'),
                 TextEntry::make('description')->label('Descripcion')->placeholder('-'),
                 TextEntry::make('prod_server')->label('Servidor PROD')->placeholder('-'),
+                TextEntry::make('prod_server_ip')->label('IP PROD')->placeholder('-'),
                 TextEntry::make('uat_server')->label('Servidor UAT')->placeholder('-'),
+                TextEntry::make('uat_server_ip')->label('IP UAT')->placeholder('-'),
                 TextEntry::make('dev_server')->label('Servidor DEV')->placeholder('-'),
+                TextEntry::make('dev_server_ip')->label('IP DEV')->placeholder('-'),
                 TextEntry::make('internal_url')->label('Dominio interno')->placeholder('-')->url(fn ($state) => $state),
                 TextEntry::make('public_url')->label('Dominio publico')->placeholder('-')->url(fn ($state) => $state),
                 TextEntry::make('repository_url')

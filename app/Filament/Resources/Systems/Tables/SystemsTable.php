@@ -6,8 +6,10 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class SystemsTable
@@ -17,6 +19,14 @@ class SystemsTable
         return $table
             ->columns([
                 TextColumn::make('name')->label('Nombre')->searchable()->sortable(),
+                BadgeColumn::make('status')
+                    ->label('Estado')
+                    ->colors([
+                        'gray' => 'draft',
+                        'success' => 'published',
+                        'danger' => 'discarded',
+                    ])
+                    ->sortable(),
                 ImageColumn::make('home_preview_url')
                     ->label('Preview')
                     ->disk('public')
@@ -26,6 +36,9 @@ class SystemsTable
                 TextColumn::make('slug')->searchable(),
                 TextColumn::make('description')->label('Descripcion')->limit(60),
                 TextColumn::make('prod_server')->label('PROD')->toggleable()->searchable()->placeholder('-'),
+                TextColumn::make('prod_server_ip')->label('IP PROD')->toggleable(isToggledHiddenByDefault: true)->searchable()->placeholder('-'),
+                TextColumn::make('uat_server_ip')->label('IP UAT')->toggleable(isToggledHiddenByDefault: true)->searchable()->placeholder('-'),
+                TextColumn::make('dev_server_ip')->label('IP DEV')->toggleable(isToggledHiddenByDefault: true)->searchable()->placeholder('-'),
                 TextColumn::make('internal_url')
                     ->label('Dominio interno')
                     ->limit(32)
@@ -39,7 +52,15 @@ class SystemsTable
                     ->toggleable(),
                 TextColumn::make('updated_at')->label('Actualizado')->dateTime()->sortable(),
             ])
-            ->filters([])
+            ->filters([
+                SelectFilter::make('status')
+                    ->label('Estado')
+                    ->options([
+                        'draft' => 'draft',
+                        'published' => 'published',
+                        'discarded' => 'discarded',
+                    ]),
+            ])
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),

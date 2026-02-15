@@ -14,10 +14,14 @@ class SystemFactory extends Factory
         return [
             'name' => Str::title($name),
             'slug' => Str::slug($name),
+            'status' => 'published',
             'description' => fake()->sentence(),
             'prod_server' => fake()->optional()->domainName(),
+            'prod_server_ip' => fake()->optional()->ipv4(),
             'uat_server' => fake()->optional()->domainName(),
+            'uat_server_ip' => fake()->optional()->ipv4(),
             'dev_server' => fake()->optional()->domainName(),
+            'dev_server_ip' => fake()->optional()->ipv4(),
             'internal_url' => fake()->optional()->url(),
             'public_url' => fake()->optional()->url(),
             'responsibles' => fake()->optional()->randomElements(
