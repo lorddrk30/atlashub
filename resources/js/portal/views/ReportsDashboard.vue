@@ -1,74 +1,72 @@
 <template>
   <section class="space-y-7 pb-10 md:space-y-10 md:pb-14">
-    <div class="relative overflow-hidden rounded-[32px] border border-white/15 bg-white/[0.04] p-6 shadow-2xl shadow-cyan-950/35 backdrop-blur-xl md:p-9">
-      <div class="atlas-grid pointer-events-none absolute inset-0 rounded-[32px] opacity-35" />
+    <div class="relative overflow-hidden rounded-lg border border-slate-800 bg-slate-900 p-6 md:p-8">
+      <div class="atlas-grid pointer-events-none absolute inset-0 rounded-lg opacity-25" />
       <div class="relative">
-        <p class="text-[11px] uppercase tracking-[0.28em] text-cyan-200/80">Analytics + Reportes</p>
-        <h1 class="display-title mt-2 text-4xl font-semibold leading-tight text-white md:text-5xl">Panel de reportes AtlasHub</h1>
+        <h1 class="mt-2 text-3xl font-semibold leading-tight text-white md:text-4xl">Panel de reportes AtlasHub</h1>
         <p class="mt-3 max-w-3xl text-sm text-slate-300 md:text-base">
           Consulta indicadores del catalogo tecnico, aplica filtros y genera reportes PDF con formato ejecutivo.
         </p>
       </div>
     </div>
 
-    <section class="rounded-3xl border border-white/10 bg-slate-950/50 p-4 backdrop-blur-xl md:p-5">
+    <section class="rounded-lg border border-slate-800 bg-slate-900 p-4 md:p-5">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p class="text-[11px] uppercase tracking-[0.24em] text-slate-400">Control de reporte</p>
-          <h2 class="display-title text-xl text-white">Filtros</h2>
+          <h2 class="text-xl font-semibold text-white">Filtros</h2>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-          <button class="rounded-full border border-white/15 px-3 py-1.5 text-xs text-slate-200 transition hover:border-cyan-300/50" @click="resetFilters">Limpiar</button>
-          <button class="rounded-full bg-gradient-to-r from-cyan-400 to-emerald-400 px-4 py-1.5 text-xs font-semibold text-slate-900 transition hover:-translate-y-0.5" @click="loadSummary">Aplicar</button>
+          <button class="rounded-md border border-slate-700 bg-slate-950 px-3 py-1.5 text-xs text-slate-200 transition hover:border-cyan-300/50" @click="resetFilters">Limpiar</button>
+          <button class="rounded-md border border-cyan-300 bg-cyan-300 px-4 py-1.5 text-xs font-semibold text-slate-900 transition hover:bg-cyan-200" @click="loadSummary">Aplicar</button>
         </div>
       </div>
 
       <div class="mt-4 grid gap-3 md:grid-cols-3">
-        <select v-model="filters.system_id" class="rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 text-sm text-slate-200 outline-none focus:border-cyan-300/70">
+        <select v-model="filters.system_id" class="rounded-md border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-cyan-300">
           <option value="">Sistema</option>
           <option v-for="item in filterCatalog.systems" :key="item.id" :value="String(item.id)">{{ item.name }}</option>
         </select>
-        <select v-model="filters.module_id" class="rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 text-sm text-slate-200 outline-none focus:border-cyan-300/70">
+        <select v-model="filters.module_id" class="rounded-md border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-cyan-300">
           <option value="">Modulo</option>
           <option v-for="item in moduleOptions" :key="item.id" :value="String(item.id)">{{ item.name }}</option>
         </select>
-        <select v-model="filters.status" class="rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 text-sm text-slate-200 outline-none focus:border-cyan-300/70">
+        <select v-model="filters.status" class="rounded-md border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-cyan-300">
           <option value="">Estado endpoint</option>
           <option v-for="item in filterCatalog.statuses" :key="item.value" :value="item.value">{{ item.label }}</option>
         </select>
-        <select v-model="filters.system_status" class="rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 text-sm text-slate-200 outline-none focus:border-cyan-300/70">
+        <select v-model="filters.system_status" class="rounded-md border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-cyan-300">
           <option value="">Estado sistema</option>
           <option v-for="item in filterCatalog.system_statuses" :key="item.value" :value="item.value">{{ item.label }}</option>
         </select>
-        <input v-model="filters.date_from" type="date" class="rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 text-sm text-slate-200 outline-none focus:border-cyan-300/70">
-        <input v-model="filters.date_to" type="date" class="rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 text-sm text-slate-200 outline-none focus:border-cyan-300/70">
-        <select v-model="filters.theme" class="rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 text-sm text-slate-200 outline-none focus:border-cyan-300/70">
+        <input v-model="filters.date_from" type="date" class="rounded-md border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-cyan-300">
+        <input v-model="filters.date_to" type="date" class="rounded-md border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-cyan-300">
+        <select v-model="filters.theme" class="rounded-md border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-cyan-300">
           <option value="dark">Tema PDF: oscuro</option>
           <option value="light">Tema PDF: claro</option>
         </select>
       </div>
     </section>
 
-    <section class="rounded-3xl border border-white/10 bg-white/[0.03] p-4 md:p-5">
+    <section class="rounded-lg border border-slate-800 bg-slate-900 p-4 md:p-5">
       <div class="flex flex-wrap items-center justify-between gap-2">
-        <h2 class="display-title text-xl text-white">Generacion de reportes</h2>
+        <h2 class="text-xl font-semibold text-white">Generacion de reportes</h2>
         <div class="flex flex-wrap items-center gap-2">
           <button
-            class="rounded-xl border border-white/20 bg-white/[0.05] px-4 py-2 text-xs text-white transition hover:border-cyan-300/60 disabled:cursor-not-allowed disabled:opacity-60"
+            class="rounded-md border border-slate-700 bg-slate-950 px-4 py-2 text-xs text-white transition hover:border-cyan-300/60 disabled:cursor-not-allowed disabled:opacity-60"
             :disabled="generatingPdf"
             @click="generatePdf('inline')"
           >
             Vista previa
           </button>
           <button
-            class="rounded-xl bg-gradient-to-r from-cyan-400 to-emerald-400 px-4 py-2 text-xs font-semibold text-slate-900 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+            class="rounded-md border border-cyan-300 bg-cyan-300 px-4 py-2 text-xs font-semibold text-slate-900 transition hover:bg-cyan-200 disabled:cursor-not-allowed disabled:opacity-60"
             :disabled="generatingPdf"
             @click="generatePdf('download')"
           >
             Generar PDF
           </button>
           <button
-            class="rounded-xl border border-white/20 bg-white/[0.05] px-4 py-2 text-xs text-white transition hover:border-cyan-300/60 disabled:cursor-not-allowed disabled:opacity-60"
+            class="rounded-md border border-slate-700 bg-slate-950 px-4 py-2 text-xs text-white transition hover:border-cyan-300/60 disabled:cursor-not-allowed disabled:opacity-60"
             :disabled="loadingSummary || !summary"
             @click="downloadCsv"
           >
@@ -79,17 +77,17 @@
       <p v-if="generatingPdf" class="mt-2 text-xs text-cyan-100">Generando reporte PDF, por favor espera...</p>
     </section>
 
-    <div v-if="loadingSummary" class="rounded-3xl border border-white/10 bg-white/[0.03] p-6 text-sm text-slate-300 animate-pulse">
+    <div v-if="loadingSummary" class="rounded-lg border border-slate-800 bg-slate-900 p-6 text-sm text-slate-300">
       Cargando estadisticas del catalogo...
     </div>
-    <div v-else-if="errorMessage" class="rounded-3xl border border-red-400/40 bg-red-500/10 p-5 text-sm text-red-100">
+    <div v-else-if="errorMessage" class="rounded-lg border border-red-400/40 bg-red-500/10 p-5 text-sm text-red-100">
       {{ errorMessage }}
     </div>
 
     <section v-if="summary" class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-      <article v-for="card in kpiCards" :key="card.label" class="rounded-2xl border border-white/10 bg-white/[0.03] p-4 shadow-lg shadow-slate-950/30">
-        <p class="text-xs uppercase tracking-[0.16em] text-slate-400">{{ card.label }}</p>
-        <p class="mt-2 display-title text-3xl text-white">{{ card.value }}</p>
+      <article v-for="card in kpiCards" :key="card.label" class="rounded-md border border-slate-700 bg-slate-900 p-4">
+        <p class="text-xs text-slate-400">{{ card.label }}</p>
+        <p class="mt-2 text-3xl font-semibold text-white">{{ card.value }}</p>
       </article>
     </section>
 

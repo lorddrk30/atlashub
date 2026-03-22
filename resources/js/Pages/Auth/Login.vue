@@ -33,8 +33,7 @@ const submit = () => {
         <Head title="Iniciar sesion" />
 
         <header class="mb-6 space-y-2">
-            <p class="text-[11px] uppercase tracking-[0.26em] text-cyan-200/80">Acceso seguro</p>
-            <h2 class="display-title text-3xl font-semibold text-white">Inicia sesion</h2>
+            <h2 class="text-2xl font-semibold text-white">Inicia sesion</h2>
             <p class="text-sm text-slate-300">Usa tus credenciales internas de AtlasHub.</p>
         </header>
 
@@ -49,7 +48,7 @@ const submit = () => {
                 <TextInput
                     id="email"
                     type="email"
-                    class="mt-1 block w-full rounded-xl border-white/15 bg-slate-950/70 px-4 py-3 text-slate-100 placeholder:text-slate-500 focus:border-cyan-300/70 focus:ring-cyan-300/45"
+                    class="mt-1 block w-full rounded-md border-slate-700 bg-slate-950 px-4 py-2.5 text-slate-100 placeholder:text-slate-500 focus:border-cyan-300 focus:ring-cyan-300/30"
                     v-model="form.email"
                     required
                     autofocus
@@ -66,7 +65,7 @@ const submit = () => {
                 <TextInput
                     id="password"
                     type="password"
-                    class="mt-1 block w-full rounded-xl border-white/15 bg-slate-950/70 px-4 py-3 text-slate-100 placeholder:text-slate-500 focus:border-cyan-300/70 focus:ring-cyan-300/45"
+                    class="mt-1 block w-full rounded-md border-slate-700 bg-slate-950 px-4 py-2.5 text-slate-100 placeholder:text-slate-500 focus:border-cyan-300 focus:ring-cyan-300/30"
                     v-model="form.password"
                     required
                     autocomplete="current-password"
@@ -78,7 +77,7 @@ const submit = () => {
 
             <div class="block">
                 <label class="flex items-center">
-                    <Checkbox name="remember" v-model:checked="form.remember" class="border-white/25 bg-slate-900 text-cyan-300 focus:ring-cyan-300/45" />
+                    <Checkbox name="remember" v-model:checked="form.remember" class="border-slate-600 bg-slate-900 text-cyan-300 focus:ring-cyan-300/30" />
                     <span class="ms-2 text-sm text-slate-300"
                         >Recordarme</span
                     >
@@ -89,14 +88,14 @@ const submit = () => {
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
-                    class="rounded-md text-sm text-slate-300 underline decoration-slate-500 underline-offset-4 transition hover:text-cyan-100 hover:decoration-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-300"
+                    class="rounded-md text-sm text-slate-300 underline decoration-slate-500 underline-offset-4 transition hover:text-cyan-100 hover:decoration-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-300/30"
                 >
                     Olvidaste tu contrasena?
                 </Link>
 
                 <button
                     type="submit"
-                    class="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-400 to-emerald-400 px-6 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-slate-900 transition hover:-translate-y-0.5 hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-cyan-200 disabled:cursor-not-allowed disabled:opacity-60"
+                    class="inline-flex items-center justify-center rounded-md border border-cyan-300 bg-cyan-300 px-6 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200 focus:outline-none focus:ring-2 focus:ring-cyan-300/40 disabled:cursor-not-allowed disabled:opacity-60"
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >

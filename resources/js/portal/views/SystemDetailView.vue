@@ -1,20 +1,20 @@
-﻿<template>
+<template>
   <section class="space-y-6 pb-12">
     <router-link
       :to="{ name: 'home', query: $route.query }"
-      class="inline-flex items-center rounded-full border border-white/15 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.2em] text-slate-200 transition hover:border-cyan-300/60 hover:text-cyan-100"
+      class="inline-flex items-center rounded-md border border-slate-700 bg-slate-900 px-4 py-2 text-xs text-slate-200 transition hover:border-cyan-300/60 hover:text-cyan-100"
     >
       <- Volver
     </router-link>
 
-    <article v-if="system" class="space-y-6 overflow-hidden rounded-[32px] border border-white/15 bg-white/[0.04] p-6 shadow-2xl shadow-cyan-950/30 backdrop-blur-xl md:p-8">
+    <article v-if="system" class="space-y-6 overflow-hidden rounded-lg border border-slate-800 bg-slate-900 p-6 md:p-8">
       <header class="space-y-3">
-        <p class="text-[11px] uppercase tracking-[0.3em] text-cyan-200/80">Sistema</p>
-        <h2 class="display-title text-3xl font-semibold text-white md:text-4xl">{{ system.name }}</h2>
+        <p class="text-xs text-cyan-100">Sistema</p>
+        <h2 class="text-2xl font-semibold text-white md:text-3xl">{{ system.name }}</h2>
         <p class="max-w-3xl text-sm text-slate-300">{{ system.description || 'Sin descripcion disponible.' }}</p>
       </header>
 
-      <section class="grid gap-3 rounded-2xl border border-white/10 bg-slate-950/60 p-4 md:grid-cols-2">
+      <section class="grid gap-3 rounded-md border border-slate-700 bg-slate-950 p-4 md:grid-cols-2">
         <p class="text-sm text-slate-200"><strong class="text-white">Servidor PROD:</strong> {{ system.prod_server || '-' }}</p>
         <p class="text-sm text-slate-200"><strong class="text-white">Servidor DEV:</strong> {{ system.dev_server || '-' }}</p>
         <p class="text-sm text-slate-200"><strong class="text-white">Dominio interno:</strong> {{ system.internal_url || '-' }}</p>
@@ -22,16 +22,15 @@
       </section>
     </article>
 
-    <section class="space-y-4 rounded-3xl border border-white/10 bg-slate-950/55 p-4 md:p-5">
+    <section class="space-y-4 rounded-lg border border-slate-800 bg-slate-900 p-4 md:p-5">
       <div class="flex items-center justify-between gap-3">
         <div>
-          <p class="text-[11px] uppercase tracking-[0.24em] text-slate-400">Documentacion tecnica</p>
-          <h3 class="display-title text-2xl text-white">Manuales y Documentacion</h3>
+          <h3 class="text-xl font-semibold text-white">Manuales y Documentacion</h3>
         </div>
       </div>
 
       <div class="grid gap-3 md:grid-cols-3">
-        <select v-model="selectedModule" class="rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 text-sm text-slate-200 outline-none focus:border-cyan-300/70">
+        <select v-model="selectedModule" class="rounded-md border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-cyan-300">
           <option value="">Todos los modulos</option>
           <option v-for="module in modules" :key="module.id" :value="String(module.id)">{{ module.name }}</option>
         </select>
@@ -39,40 +38,40 @@
           v-model="query"
           type="search"
           placeholder="Buscar manual o guia..."
-          class="rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 text-sm text-slate-200 outline-none placeholder:text-slate-500 focus:border-cyan-300/70"
+          class="rounded-md border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-slate-200 outline-none placeholder:text-slate-500 focus:border-cyan-300"
           @keydown.enter="loadDocuments"
         >
-        <button class="rounded-xl bg-gradient-to-r from-cyan-400 to-emerald-400 px-4 py-3 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5 hover:brightness-110" @click="loadDocuments">Aplicar</button>
+        <button class="rounded-md border border-cyan-300 bg-cyan-300 px-4 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-cyan-200" @click="loadDocuments">Aplicar</button>
       </div>
 
-      <p v-if="authError" class="rounded-2xl border border-amber-300/30 bg-amber-300/10 p-4 text-sm text-amber-100">
+      <p v-if="authError" class="rounded-md border border-amber-300/30 bg-amber-300/10 p-4 text-sm text-amber-100">
         Debes iniciar sesion para visualizar o descargar PDFs.
       </p>
-      <p v-if="loadError" class="rounded-2xl border border-rose-300/30 bg-rose-300/10 p-4 text-sm text-rose-100">
+      <p v-if="loadError" class="rounded-md border border-rose-300/30 bg-rose-300/10 p-4 text-sm text-rose-100">
         {{ loadError }}
       </p>
 
-      <div v-if="loadingDocuments" class="rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-sm text-slate-300">Cargando documentos...</div>
+      <div v-if="loadingDocuments" class="rounded-md border border-slate-700 bg-slate-900 p-4 text-sm text-slate-300">Cargando documentos...</div>
 
       <div v-else-if="documents.length > 0" class="grid gap-3 md:grid-cols-2">
         <article
           v-for="doc in documents"
           :key="doc.id"
-          class="rounded-2xl border border-white/10 bg-white/[0.03] p-4 shadow-lg shadow-cyan-950/20 transition hover:-translate-y-0.5 hover:border-cyan-300/40"
+          class="rounded-md border border-slate-700 bg-slate-900 p-4 transition hover:border-cyan-300/40"
         >
-          <p class="text-[11px] uppercase tracking-[0.2em] text-cyan-200/75">{{ iconByType(doc.type) }} {{ labelByType(doc.type) }}</p>
+          <p class="text-xs text-cyan-100">{{ iconByType(doc.type) }} {{ labelByType(doc.type) }}</p>
           <h4 class="mt-2 text-lg font-semibold text-white">{{ doc.title }}</h4>
           <p class="mt-2 text-sm text-slate-300">{{ doc.description || 'Sin descripcion.' }}</p>
           <p class="mt-2 text-xs text-slate-400">{{ formatBytes(doc.size) }} · {{ doc.mime_type }}</p>
           <div class="mt-3 flex flex-wrap gap-2">
             <button
-              class="rounded-lg border border-white/20 bg-white/[0.05] px-3 py-1.5 text-xs text-white transition hover:border-cyan-300/60"
+              class="rounded-md border border-slate-700 bg-slate-950 px-3 py-1.5 text-xs text-white transition hover:border-cyan-300/60"
               @click="openUrl(doc.view_url)"
             >
               Ver PDF
             </button>
             <button
-              class="rounded-lg border border-white/20 bg-white/[0.05] px-3 py-1.5 text-xs text-white transition hover:border-cyan-300/60"
+              class="rounded-md border border-slate-700 bg-slate-950 px-3 py-1.5 text-xs text-white transition hover:border-cyan-300/60"
               @click="openUrl(doc.download_url)"
             >
               Descargar
@@ -81,7 +80,7 @@
         </article>
       </div>
 
-      <p v-else class="rounded-2xl border border-dashed border-white/20 bg-slate-900/60 p-5 text-sm text-slate-400">
+      <p v-else class="rounded-md border border-dashed border-slate-700 bg-slate-900 p-5 text-sm text-slate-400">
         No hay documentos para este sistema/modulo.
       </p>
     </section>

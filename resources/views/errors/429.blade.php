@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
     <head>
         <meta charset="utf-8">
@@ -16,89 +16,87 @@
             body {
                 margin: 0;
                 min-height: 100vh;
-                font-family: 'Segoe UI', Inter, system-ui, sans-serif;
+                font-family: 'Sora', ui-sans-serif, system-ui, sans-serif;
                 color: #e2e8f0;
-                background:
-                    radial-gradient(circle at 16% 10%, rgba(34, 211, 238, 0.18), transparent 28%),
-                    radial-gradient(circle at 78% 20%, rgba(16, 185, 129, 0.16), transparent 34%),
-                    linear-gradient(160deg, #050915 12%, #091228 55%, #040812 100%);
+                background: #050915;
                 display: grid;
                 place-items: center;
-                padding: 1.5rem;
+                padding: 1rem;
             }
 
             .panel {
-                width: min(640px, 100%);
+                width: min(520px, 100%);
                 border: 1px solid rgba(148, 163, 184, 0.28);
-                border-radius: 24px;
-                background: rgba(8, 15, 33, 0.72);
-                box-shadow: 0 24px 52px rgba(2, 6, 23, 0.56);
-                backdrop-filter: blur(14px);
-                padding: 2rem;
+                border-radius: 10px;
+                background: #111c33;
+                box-shadow: 0 2px 8px rgba(2, 6, 23, 0.3);
+                padding: 1.25rem;
             }
 
             .code {
                 margin: 0;
-                font-size: 0.75rem;
-                letter-spacing: 0.28em;
-                text-transform: uppercase;
-                color: rgba(165, 243, 252, 0.85);
+                font-size: 0.875rem;
+                font-weight: 600;
+                color: #a5f3fc;
             }
 
-            h1 {
-                margin: 0.6rem 0 0.4rem;
-                font-size: clamp(1.65rem, 3.2vw, 2.4rem);
-                letter-spacing: -0.02em;
+            .title {
+                margin: 0.4rem 0 0.35rem;
+                font-size: 1.25rem;
+                font-weight: 700;
                 color: #f8fafc;
             }
 
-            p {
+            .description {
                 margin: 0;
                 line-height: 1.6;
                 color: #cbd5e1;
+                font-size: 0.95rem;
             }
 
             .actions {
-                margin-top: 1.4rem;
+                margin-top: 1rem;
                 display: flex;
                 flex-wrap: wrap;
-                gap: 0.75rem;
+                gap: 0.5rem;
             }
 
             .btn {
                 appearance: none;
                 border: 1px solid rgba(148, 163, 184, 0.34);
-                border-radius: 999px;
+                border-radius: 8px;
                 color: #e2e8f0;
                 background: rgba(15, 23, 42, 0.78);
-                padding: 0.68rem 0.98rem;
+                padding: 0.6rem 0.85rem;
                 text-decoration: none;
                 font-weight: 600;
-                font-size: 0.83rem;
-                letter-spacing: 0.06em;
-                text-transform: uppercase;
-                transition: transform .18s ease, border-color .18s ease, filter .18s ease;
+                font-size: 0.85rem;
+                transition: background-color .15s ease, border-color .15s ease, color .15s ease;
                 cursor: pointer;
             }
 
             .btn:hover {
-                transform: translateY(-1px);
-                border-color: rgba(34, 211, 238, 0.56);
-                filter: brightness(1.06);
+                border-color: rgba(34, 211, 238, 0.55);
+                background: rgba(30, 41, 59, 0.9);
             }
 
             .btn-primary {
-                border: 0;
-                color: #021420;
-                background: linear-gradient(135deg, #22d3ee, #34d399);
+                border-color: transparent;
+                color: #042028;
+                background: #22d3ee;
+            }
+
+            .btn-primary:hover {
+                color: #041311;
+                background: #10b981;
             }
         </style>
     </head>
     <body>
         <main class="panel">
             <p class="code">Error 429</p>
-            <h1>Demasiadas solicitudes</h1>
-            <p>Realizaste demasiadas peticiones en poco tiempo. Espera unos segundos e intenta de nuevo.</p>
+            <p class="title">Demasiadas solicitudes</p>
+            <p class="description">Realizaste demasiadas peticiones en poco tiempo. Espera unos segundos e intenta de nuevo.</p>
 
             <div class="actions">
                 <a href="/" class="btn">Volver al portal</a>
