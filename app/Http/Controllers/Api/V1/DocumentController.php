@@ -8,12 +8,11 @@ use App\Http\Requests\Api\V1\ListDocumentsRequest;
 use App\Http\Requests\Api\V1\StoreDocumentRequest;
 use App\Models\Document;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class DocumentController extends Controller
 {
-    public function __construct(private readonly DocumentService $service)
-    {
-    }
+    public function __construct(private readonly DocumentService $service) {}
 
     public function store(StoreDocumentRequest $request): JsonResponse
     {
@@ -26,16 +25,19 @@ class DocumentController extends Controller
         );
 
         return response()->json([
-            'item' => $this->transformDocument($document->load(['system:id,name,slug', 'module:id,name,slug', 'endpoint:id,public_id,name,method,path'])),
+            'item' => $this->transformDocument($request, $document->load(['system:id,name,slug', 'module:id,name,slug', 'endpoint:id,public_id,name,method,path'])),
         ], 201);
     }
 
     public function index(ListDocumentsRequest $request): JsonResponse
     {
-        $documents = $this->service->list($request->validated());
+        $documents = $this->service->list(
+            $request->validated(),
+            $request->user()?->can('document.view') ?? false
+        );
 
         return response()->json([
-            'items' => collect($documents->items())->map(fn (Document $document): array => $this->transformDocument($document))->values(),
+            'items' => collect($documents->items())->map(fn (Document $document): array => $this->transformDocument($request, $document))->values(),
             'meta' => [
                 'current_page' => $documents->currentPage(),
                 'per_page' => $documents->perPage(),
@@ -44,14 +46,19 @@ class DocumentController extends Controller
         ]);
     }
 
-    public function show(Document $document): JsonResponse
+    public function show(Request $request, Document $document): JsonResponse
     {
+        if (! $document->is_public && ! $request->user()) {
+            abort(404);
+        }
+
+        $this->authorize('view', $document);
+
         return response()->json([
-            'item' => $this->transformDocument($document->load([
+            'item' => $this->transformDocument($request, $document->load([
                 'system:id,name,slug',
                 'module:id,system_id,name,slug',
                 'endpoint:id,public_id,module_id,name,method,path',
-                'uploader:id,name,email',
             ])),
         ]);
     }
@@ -65,11 +72,20 @@ class DocumentController extends Controller
         return response()->json(status: 204);
     }
 
-    private function transformDocument(Document $document): array
+    private function transformDocument(Request $request, Document $document): array
     {
-        $payload = $document->toArray();
-        $payload['view_url'] = route('documents.file', ['document' => $document->id]);
-        $payload['download_url'] = route('documents.file', ['document' => $document->id, 'download' => 1]);
+        $payload = $document->only([
+            'id', 'title', 'description', 'type', 'mime_type', 'size', 'is_public', 'created_at', 'updated_at',
+        ]);
+        $fileRoute = $request->bearerToken() ? 'api.documents.file' : 'documents.file';
+        $payload['view_url'] = route($fileRoute, ['document' => $document->id]);
+        $payload['download_url'] = route($fileRoute, ['document' => $document->id, 'download' => 1]);
+
+        if ($request->user()?->can('document.view')) {
+            $payload['system'] = $document->system;
+            $payload['module'] = $document->module;
+            $payload['endpoint'] = $document->endpoint;
+        }
 
         return $payload;
     }

@@ -1,6 +1,6 @@
 <template>
   <section class="space-y-5 pb-12">
-    <router-link :to="{ name: 'home', query: $route.query }" class="inline-flex items-center rounded-md border border-slate-700 bg-slate-900 px-4 py-2 text-xs text-slate-200 transition hover:border-cyan-300/60 hover:text-cyan-100"><- Volver</router-link>
+    <router-link :to="backDestination" class="inline-block text-sm text-cyan-200 hover:underline focus-visible:underline">← {{ backToSystem ? 'Volver al sistema' : 'Volver al catálogo' }}</router-link>
 
     <article v-if="endpoint" class="space-y-7 overflow-hidden rounded-lg border border-slate-800 bg-slate-900 p-5 md:p-8">
       <header class="space-y-3">
@@ -120,8 +120,13 @@ import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
+import { withoutEndpointFilters } from '../utils/systemDetailState';
 
 const route = useRoute();
+const backToSystem = computed(() => typeof route.query.from_system === 'string' && /^\d+$/.test(route.query.from_system));
+const backDestination = computed(() => backToSystem.value
+  ? { name: 'system-detail', params: { systemId: route.query.from_system }, query: { ...route.query, from_system: undefined } }
+  : { name: 'home', query: withoutEndpointFilters(route.query) });
 const loading = ref(false);
 const endpoint = ref(null);
 const feedback = ref('');

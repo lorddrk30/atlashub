@@ -17,7 +17,38 @@ test('users can authenticate using the login screen', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect(route('portal.home', absolute: false));
+});
+
+test('login returns a user to their intended intranet page', function () {
+    $user = User::factory()->create();
+
+    $this->get('/reports')->assertRedirect('/login');
+
+    $this->post('/login', [
+        'email' => $user->email,
+        'password' => 'password',
+    ])->assertRedirect('/reports');
+});
+
+test('inertia login performs a full visit when entering the non-inertia portal', function () {
+    $user = User::factory()->create();
+
+    $this->withHeaders(['X-Inertia' => 'true', 'X-Requested-With' => 'XMLHttpRequest'])
+        ->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ])
+        ->assertStatus(409)
+        ->assertHeader('X-Inertia-Location', route('portal.home'));
+
+    $this->assertAuthenticatedAs($user);
+});
+
+test('legacy dashboard links lead to the intranet instead of the Breeze placeholder', function () {
+    $this->actingAs(User::factory()->create())
+        ->get('/dashboard')
+        ->assertRedirect(route('portal.home'));
 });
 
 test('users can not authenticate with invalid password', function () {

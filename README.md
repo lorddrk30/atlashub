@@ -1,109 +1,72 @@
 # AtlasHub
 
-<div align="center">
+AtlasHub es un catálogo autoadministrable de sistemas, APIs y documentación técnica. Ayuda a los equipos a encontrar responsables, entornos, endpoints, artefactos y manuales sin dispersar la información entre hojas de cálculo y wikis. Está construido con Laravel, Filament y Vue.
 
-![License](https://img.shields.io/badge/license-MIT-yellow?style=for-the-badge)
-![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php&logoColor=white)
-![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
-![Filament](https://img.shields.io/badge/Filament-5.x-F28D35?style=for-the-badge)
-![Vue.js](https://img.shields.io/badge/Vue.js-3.x-4FC08D?style=for-the-badge&logo=vue.js&logoColor=white)
-![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-4.x-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16+-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+**Dos espacios, una regla clara:** la [documentación pública](docs/document-visibility.md) muestra solo PDF que un administrador haya aprobado; el inventario técnico y los reportes requieren iniciar sesión. Publicar un documento **no** publica el sistema o endpoint al que pertenece.
 
-</div>
+## Qué incluye
 
+- **Intranet:** búsqueda de sistemas, módulos, endpoints, artefactos y documentos; fichas de API con métodos, rutas y ejemplos; reportes para usuarios autenticados.
+- **Backoffice:** administración de inventario, usuarios, roles, permisos y marca de la organización con Filament.
+- **Documentos PDF:** carga y descarga desde almacenamiento privado; visibilidad pública por documento, desactivada por defecto.
+- **API v1:** consultas del catálogo protegidas con Sanctum y listado de documentos que filtra los privados para visitantes.
 
----
+AtlasHub **no publica sistemas, direcciones IP ni endpoints de forma individual**. El único contenido técnico accesible sin cuenta es el PDF marcado explícitamente como público, junto con su título y descripción. Revisa cada archivo antes de publicarlo.
 
-## 🚀 Sobre el Proyecto
+## Inicio rápido local
 
-**AtlasHub** es una solución moderna para la gestión del conocimiento técnico de tu organización. Permite centralizar la documentación de APIs, artefactos y sistemas en una estructura jerárquica clara:
+Requisitos: PHP 8.2+, Composer 2, Node.js 20+ y PostgreSQL 14+. Configura la base de datos en `.env` antes de migrar.
 
-`Sistema -> Modulo -> Endpoint`
+```bash
+git clone https://github.com/lorddrk30/atlashub.git
+cd atlashub
+cp .env.example .env
+composer install
+npm install
+php artisan key:generate
+php artisan migrate
+php artisan storage:link
+php artisan atlashub:create-admin admin@example.com "Admin AtlasHub"
+```
 
-### ✨ Características Principales
+El último comando pide una contraseña segura de forma interactiva y crea el primer administrador. En dos terminales, inicia la aplicación y Vite:
 
--   🔍 **Búsqueda Global Inteligente**: Encuentra sistemas, módulos, endpoints y artefactos al instante.
--   📄 **Documentación Interactiva**: Detalle de endpoints tipo mini-Swagger.
--   🛠️ **Panel de Administración**: Construido con **Filament 5** para una gestión robusta.
--   📊 **Reportes y Logs**: Visualización de actividad y métricas del sistema.
--   🔐 **Seguridad Granular**: Roles y permisos con Spatie Permission.
+```bash
+php artisan serve
+npm run dev
+```
 
-## 🛠️ Stack Tecnológico
+Abre `/documentation` para ver los PDF públicos, `/login` para entrar a la intranet y `/backoffice` para administrar. Si aún no publicaste documentos, la página pública mostrará un estado vacío.
 
-Este proyecto utiliza las últimas tecnologías del ecosistema PHP y JavaScript:
+**Datos de demostración:** solo en desarrollo puedes usar `php artisan db:seed` para cargar la organización RikarCoffe, infraestructura ficticia y cuentas con contraseñas conocidas. No uses esos datos en una instancia accesible a terceros. El seeder se niega a ejecutarse en `APP_ENV=production`.
 
--   **Backend**: Laravel 12, Laravel Sanctum, Spatie Permission/Activitylog.
--   **Admin Panel**: Filament 5.
--   **Frontend**: Vue 3, Inertia.js, TailwindCSS 4, Headless UI.
--   **Base de Datos**: PostgreSQL.
--   **Herramientas**: Vite, Pest PHP.
+## Producción y actualizaciones
 
-## ⚡ Inicio Rápido
+No uses `migrate --seed` ni `db:seed` en producción. Ejecuta `php artisan migrate --force`, compila con `npm run build` y crea el administrador mediante `atlashub:create-admin`. Configura HTTPS, correo, permisos de almacenamiento y las variables `ATLASHUB_ORG_*` según tu organización.
 
-Sigue estos pasos para levantar el entorno de desarrollo:
+Si actualizas una instalación anterior que guardaba PDF en el disco público, **no levantes el mantenimiento todavía**: tras migrar ejecuta `php artisan documents:migrate-to-private`, verifica que no queden PDF expuestos en `storage/app/public/documents` y recién entonces revisa cuáles se harán públicos. Sigue el [procedimiento de migración y visibilidad](docs/document-visibility.md).
 
-1.  **Clonar y configurar entorno**:
-    ```bash
-    cp .env.example .env
-    # Configura tus credenciales de base de datos en .env
-    ```
+## Tecnologías y verificación
 
-2.  **Instalar dependencias**:
-    ```bash
-    composer install
-    npm install
-    ```
+Laravel 12 · PHP 8.2+ · Filament 5 · Vue 3 · Inertia.js · Tailwind CSS **3** · PostgreSQL · Sanctum · Spatie Permission · Pest.
 
-3.  **Inicializar base de datos**:
-    ```bash
-    php artisan key:generate
-    php artisan migrate --seed
-    ```
+```bash
+php artisan test
+./vendor/bin/pint --test
+npm run build
+```
 
-4.  **Iniciar servidores**:
-    ```bash
-    # En terminales separadas
-    php artisan serve
-    npm run dev
-    ```
+## Documentación
 
-### 🔑 Credenciales Demo
+- [Instalación y configuración](docs/01-instalacion.md)
+- [Arquitectura](docs/02-arquitectura.md)
+- [Modelo de datos](docs/03-modelo-datos.md)
+- [API v1](docs/04-api.md)
+- [Administración y permisos](docs/05-admin.md)
+- [Visibilidad y migración de documentos](docs/document-visibility.md)
+- [Despliegue](docs/07-despliegue.md)
+- [Contribuir](docs/09-contribuir.md)
 
-| Rol | Email | Password |
-| :--- | :--- | :--- |
-| **Admin** | `admin@rikarcoffe.local` | `password` |
-| **Editor** | `editor@rikarcoffe.local` | `password` |
-| **Viewer** | `viewer@rikarcoffe.local` | `password` |
+## Licencia
 
-## 📚 Documentación
-
-La documentación detallada se encuentra en la carpeta `docs/`:
-
--   [Arquitectura](docs/02-arquitectura.md)
--   [Modelo de Datos](docs/03-modelo-datos.md)
--   [API Reference](docs/04-api.md)
--   [Guía de Administración](docs/05-admin.md)
--   [Despliegue](docs/07-despliegue.md)
-
-## 🤝 Contribución
-
-Este es un proyecto open source y las contribuciones son bienvenidas.
-
-1.  Haz un Fork del repositorio.
-2.  Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`).
-3.  Commit de tus cambios (`git commit -m 'Add some AmazingFeature'`).
-4.  Push a la rama (`git push origin feature/AmazingFeature`).
-5.  Abre un Pull Request.
-
-Consulta [docs/09-contribuir.md](docs/09-contribuir.md) para más detalles.
-
-## 📜 Licencia
-
-Distribuido bajo la licencia MIT. Ver `LICENSE` para más información.
-
----
-
-<p align="center">
-  Creado con ❤️ por <strong>Erik Alan Alvarez</strong> y la comunidad.
-</p>
+[MIT](LICENSE). Se aceptan propuestas y mejoras mediante issues y pull requests.

@@ -69,35 +69,6 @@
                 color: #cbd5e1;
             }
 
-            .grid {
-                margin-top: 1.2rem;
-                display: grid;
-                gap: 0.85rem;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-
-            .metric {
-                border-radius: 16px;
-                border: 1px solid rgba(148, 163, 184, 0.18);
-                background: rgba(15, 23, 42, 0.52);
-                padding: 0.78rem;
-            }
-
-            .metric .label {
-                margin: 0;
-                font-size: 0.71rem;
-                text-transform: uppercase;
-                letter-spacing: 0.12em;
-                color: #93c5fd;
-            }
-
-            .metric .value {
-                margin: 0.22rem 0 0;
-                color: #f8fafc;
-                font-weight: 700;
-                word-break: break-all;
-            }
-
             .actions {
                 margin-top: 1.2rem;
                 display: flex;
@@ -133,39 +104,6 @@
                 background: linear-gradient(135deg, #22d3ee, #34d399);
             }
 
-            .hint {
-                margin-top: 1rem;
-                border-radius: 16px;
-                border: 1px solid rgba(148, 163, 184, 0.2);
-                background: rgba(2, 6, 23, 0.52);
-                padding: 0.85rem;
-            }
-
-            .hint h2 {
-                margin: 0;
-                font-size: 0.84rem;
-                letter-spacing: 0.08em;
-                text-transform: uppercase;
-                color: #7dd3fc;
-            }
-
-            .hint pre {
-                margin: 0.7rem 0 0;
-                padding: 0.82rem;
-                border-radius: 10px;
-                border: 1px solid rgba(148, 163, 184, 0.18);
-                background: rgba(15, 23, 42, 0.6);
-                color: #e2e8f0;
-                overflow-x: auto;
-                font-size: 0.78rem;
-                line-height: 1.45;
-            }
-
-            @media (max-width: 740px) {
-                .grid {
-                    grid-template-columns: 1fr;
-                }
-            }
         </style>
     </head>
     <body>
@@ -173,40 +111,14 @@
             <span class="badge">Servicio no disponible</span>
             <h1>AtlasHub no pudo conectar con la base de datos</h1>
             <p class="lead">
-                El portal se mantuvo en linea, pero la conexion al motor de datos fallo. Revisa configuracion y estado del servidor para volver a operar.
+                El servicio no esta disponible temporalmente. Vuelve a intentarlo en unos minutos.
             </p>
-
-            <section class="grid" aria-label="Diagnostico de conexion">
-                <article class="metric">
-                    <p class="label">Conexion</p>
-                    <p class="value">{{ $databaseInfo['connection'] ?? 'n/a' }}</p>
-                </article>
-                <article class="metric">
-                    <p class="label">Host</p>
-                    <p class="value">{{ $databaseInfo['host'] ?? 'n/a' }}</p>
-                </article>
-                <article class="metric">
-                    <p class="label">Puerto</p>
-                    <p class="value">{{ $databaseInfo['port'] ?? 'n/a' }}</p>
-                </article>
-                <article class="metric">
-                    <p class="label">Base de datos</p>
-                    <p class="value">{{ $databaseInfo['database'] ?? 'n/a' }}</p>
-                </article>
-            </section>
 
             <div class="actions">
                 <button onclick="window.location.reload()" class="btn btn-primary">Reintentar ahora</button>
                 <a href="/" class="btn">Ir al portal</a>
                 <a href="/admin/login" class="btn">Ir al backoffice</a>
             </div>
-
-            <section class="hint">
-                <h2>Checklist rapido</h2>
-                <pre>1) Verifica DB_DATABASE, DB_HOST, DB_PORT en .env
-2) php artisan optimize:clear
-3) php artisan migrate --seed</pre>
-            </section>
 
             <p style="margin: 0.85rem 0 0; color: #94a3b8; font-size: 0.75rem;">
                 Timestamp: {{ $timestamp ?? now()->format('Y-m-d H:i:s') }}

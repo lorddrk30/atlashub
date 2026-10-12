@@ -12,9 +12,11 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -40,6 +42,11 @@ class DocumentsRelationManager extends RelationManager
                 ->label('Tipo')
                 ->options(array_combine(Document::TYPES, array_map('ucfirst', Document::TYPES)))
                 ->required(),
+            Toggle::make('is_public')
+                ->label('Visible sin iniciar sesion')
+                ->helperText('Solo este PDF sera publico; los datos del sistema y sus endpoints seguiran siendo privados.')
+                ->visible(fn (): bool => auth()->user()?->hasRole('admin') ?? false)
+                ->default(false),
             Select::make('module_id')
                 ->label('Modulo (opcional)')
                 ->searchable()
@@ -80,14 +87,13 @@ class DocumentsRelationManager extends RelationManager
                 ->acceptedFileTypes(['application/pdf'])
                 ->maxSize(20480)
                 ->required()
-                ->disk('public')
-                ->visibility('public')
+                ->disk('local')
+                ->visibility('private')
                 ->directory(function (): string {
                     $slug = (string) ($this->getOwnerRecord()->slug ?? 'sistema');
 
                     return 'documents/'.Str::slug($slug);
-                })
-                ->preserveFilenames(),
+                }),
         ]);
     }
 
@@ -98,6 +104,9 @@ class DocumentsRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('title')->label('Titulo')->searchable()->limit(40),
                 TextColumn::make('type')->label('Tipo')->badge(),
+                ToggleColumn::make('is_public')
+                    ->label('Publico')
+                    ->disabled(fn (): bool => ! (auth()->user()?->hasRole('admin') ?? false)),
                 TextColumn::make('module.name')->label('Modulo')->placeholder('-'),
                 TextColumn::make('endpoint.path')->label('Endpoint')->placeholder('-')->limit(30),
                 TextColumn::make('created_at')->label('Subido')->since(),
@@ -113,8 +122,9 @@ class DocumentsRelationManager extends RelationManager
                         $data['system_id'] = $this->getOwnerRecord()->id;
                         $data['file_path'] = $filePath;
                         $data['mime_type'] = 'application/pdf';
-                        $data['size'] = $filePath ? (Storage::disk('public')->size($filePath) ?: 0) : 0;
+                        $data['size'] = $filePath ? (Storage::disk('local')->size($filePath) ?: 0) : 0;
                         $data['uploaded_by'] = auth()->id();
+                        $data['is_public'] = auth()->user()?->hasRole('admin') ? (bool) ($data['is_public'] ?? false) : false;
                         unset($data['file']);
 
                         return $data;

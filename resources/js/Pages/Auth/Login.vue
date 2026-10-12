@@ -30,11 +30,11 @@ const submit = () => {
 
 <template>
     <GuestLayout>
-        <Head title="Iniciar sesion" />
+        <Head title="Iniciar sesión en la intranet" />
 
         <header class="mb-6 space-y-2">
-            <h2 class="text-2xl font-semibold text-white">Inicia sesion</h2>
-            <p class="text-sm text-slate-300">Usa tus credenciales internas de AtlasHub.</p>
+            <h2 class="text-2xl font-semibold text-white">Iniciar sesión</h2>
+            <p class="text-sm text-slate-300">Usa la cuenta que te asignó un administrador. No hay registro público.</p>
         </header>
 
         <div v-if="status" class="mb-4 rounded-xl border border-emerald-300/40 bg-emerald-300/15 px-3 py-2 text-sm font-medium text-emerald-100">
@@ -60,7 +60,7 @@ const submit = () => {
             </div>
 
             <div>
-                <InputLabel for="password" value="Contrasena" class="text-sm font-medium text-slate-200" />
+                <InputLabel for="password" value="Contraseña" class="text-sm font-medium text-slate-200" />
 
                 <TextInput
                     id="password"
@@ -90,7 +90,7 @@ const submit = () => {
                     :href="route('password.request')"
                     class="rounded-md text-sm text-slate-300 underline decoration-slate-500 underline-offset-4 transition hover:text-cyan-100 hover:decoration-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-300/30"
                 >
-                    Olvidaste tu contrasena?
+                    ¿Olvidaste tu contraseña?
                 </Link>
 
                 <button

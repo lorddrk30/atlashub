@@ -24,6 +24,7 @@ class StoreDocumentRequest extends FormRequest
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'type' => ['required', 'string', Rule::in(Document::TYPES)],
+            'is_public' => ['sometimes', 'boolean', Rule::prohibitedIf(! $this->user()?->hasRole('admin'))],
             'file' => ['required', 'file', 'mimetypes:application/pdf', 'max:20480'],
         ];
     }

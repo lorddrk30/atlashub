@@ -13,16 +13,22 @@ use Illuminate\Support\Str;
 
 class DocumentService
 {
-    public function list(array $filters): LengthAwarePaginator
+    public function list(array $filters, bool $canViewPrivate = false): LengthAwarePaginator
     {
         $query = Document::query()
             ->with([
                 'system:id,name,slug',
                 'module:id,system_id,name,slug',
                 'endpoint:id,public_id,module_id,name,method,path',
-                'uploader:id,name,email',
-            ])
-            ->where('system_id', (int) $filters['system_id']);
+            ]);
+
+        if (! empty($filters['system_id'])) {
+            $query->where('system_id', (int) $filters['system_id']);
+        }
+
+        if (! $canViewPrivate) {
+            $query->where('is_public', true);
+        }
 
         if (! empty($filters['module_id'])) {
             $query->where('module_id', (int) $filters['module_id']);
@@ -48,9 +54,9 @@ class DocumentService
     {
         $system = System::query()->select('id', 'slug')->findOrFail((int) $data['system_id']);
         $safeFileName = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) ?: 'document';
-        $fileName = sprintf('%s-%s.pdf', now()->format('YmdHis'), Str::limit($safeFileName, 80, ''));
+        $fileName = sprintf('%s-%s.pdf', Str::ulid(), Str::limit($safeFileName, 80, ''));
         $directory = sprintf('documents/%s', $system->slug);
-        $path = $file->storeAs($directory, $fileName, 'public');
+        $path = $file->storeAs($directory, $fileName, 'local');
 
         return Document::query()->create([
             'system_id' => $system->id,
@@ -60,16 +66,17 @@ class DocumentService
             'description' => $data['description'] ?? null,
             'type' => $data['type'],
             'file_path' => $path,
-            'mime_type' => $file->getClientMimeType() ?: 'application/pdf',
+            'mime_type' => 'application/pdf',
             'size' => $file->getSize() ?: 0,
             'uploaded_by' => $user->id,
+            'is_public' => $data['is_public'] ?? false,
         ]);
     }
 
     public function delete(Document $document): void
     {
-        if (filled($document->file_path) && Storage::disk('public')->exists($document->file_path)) {
-            Storage::disk('public')->delete($document->file_path);
+        if (filled($document->file_path) && Storage::disk('local')->exists($document->file_path)) {
+            Storage::disk('local')->delete($document->file_path);
         }
 
         $document->delete();

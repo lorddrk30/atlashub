@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use App\Models\Document;
 use App\Models\Module;
@@ -13,16 +13,16 @@ use Spatie\Permission\Models\Role;
 
 uses(RefreshDatabase::class);
 
-it('allows public listing by system', function (): void {
+it('does not allow anonymous catalog filtering', function (): void {
     $system = System::factory()->create();
 
     $this->getJson('/api/v1/documents?system_id='.$system->id)
-        ->assertOk()
-        ->assertJsonPath('meta.total', 0);
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('system_id');
 });
 
 it('uploads and lists pdf documents by system', function (): void {
-    Storage::fake('public');
+    Storage::fake('local');
 
     $permissionView = Permission::query()->create(['name' => 'document.view', 'guard_name' => 'web']);
     $permissionManage = Permission::query()->create(['name' => 'document.manage', 'guard_name' => 'web']);
@@ -57,7 +57,7 @@ it('uploads and lists pdf documents by system', function (): void {
     $document = Document::query()->first();
 
     expect($document)->not->toBeNull();
-    Storage::disk('public')->assertExists($document->file_path);
+    Storage::disk('local')->assertExists($document->file_path);
 
     $listResponse = $this->getJson('/api/v1/documents?system_id='.$system->id);
 
@@ -69,7 +69,7 @@ it('uploads and lists pdf documents by system', function (): void {
 });
 
 it('blocks non-pdf uploads', function (): void {
-    Storage::fake('public');
+    Storage::fake('local');
 
     $permissionManage = Permission::query()->create(['name' => 'document.manage', 'guard_name' => 'web']);
     $permissionView = Permission::query()->create(['name' => 'document.view', 'guard_name' => 'web']);
@@ -94,7 +94,7 @@ it('blocks non-pdf uploads', function (): void {
 });
 
 it('serves document file for authenticated users with view permission', function (): void {
-    Storage::fake('public');
+    Storage::fake('local');
 
     $permissionView = Permission::query()->create(['name' => 'document.view', 'guard_name' => 'web']);
     $role = Role::query()->create(['name' => 'viewer', 'guard_name' => 'web']);
@@ -105,7 +105,7 @@ it('serves document file for authenticated users with view permission', function
 
     $system = System::factory()->create();
 
-    Storage::disk('public')->put('documents/'.$system->slug.'/manual.pdf', '%PDF-1.4 test');
+    Storage::disk('local')->put('documents/'.$system->slug.'/manual.pdf', '%PDF-1.4 test');
 
     $document = Document::query()->create([
         'system_id' => $system->id,
@@ -129,12 +129,12 @@ it('serves document file for authenticated users with view permission', function
 });
 
 it('blocks document file when unauthenticated', function (): void {
-    Storage::fake('public');
+    Storage::fake('local');
 
     $user = User::factory()->create();
     $system = System::factory()->create();
 
-    Storage::disk('public')->put('documents/'.$system->slug.'/private.pdf', '%PDF-1.4 test');
+    Storage::disk('local')->put('documents/'.$system->slug.'/private.pdf', '%PDF-1.4 test');
 
     $document = Document::query()->create([
         'system_id' => $system->id,
@@ -146,11 +146,11 @@ it('blocks document file when unauthenticated', function (): void {
         'uploaded_by' => $user->id,
     ]);
 
-    $this->getJson('/api/v1/documents/'.$document->id.'/file')->assertUnauthorized();
+    $this->getJson('/api/v1/documents/'.$document->id.'/file')->assertNotFound();
 });
 
 it('deletes document and physical file with manage permission', function (): void {
-    Storage::fake('public');
+    Storage::fake('local');
 
     $permissionView = Permission::query()->create(['name' => 'document.view', 'guard_name' => 'web']);
     $permissionManage = Permission::query()->create(['name' => 'document.manage', 'guard_name' => 'web']);
@@ -162,7 +162,7 @@ it('deletes document and physical file with manage permission', function (): voi
 
     $system = System::factory()->create();
 
-    Storage::disk('public')->put('documents/'.$system->slug.'/to-delete.pdf', '%PDF-1.4 test');
+    Storage::disk('local')->put('documents/'.$system->slug.'/to-delete.pdf', '%PDF-1.4 test');
 
     $document = Document::query()->create([
         'system_id' => $system->id,
@@ -179,5 +179,5 @@ it('deletes document and physical file with manage permission', function (): voi
     $this->deleteJson('/api/v1/documents/'.$document->id)->assertNoContent();
 
     expect(Document::query()->find($document->id))->toBeNull();
-    Storage::disk('public')->assertMissing('documents/'.$system->slug.'/to-delete.pdf');
+    Storage::disk('local')->assertMissing('documents/'.$system->slug.'/to-delete.pdf');
 });

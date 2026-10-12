@@ -13,10 +13,12 @@ class ListDocumentsRequest extends FormRequest
 
     public function rules(): array
     {
+        $catalogFilters = $this->user() !== null;
+
         return [
-            'system_id' => ['required', 'integer', 'exists:systems,id'],
-            'module_id' => ['nullable', 'integer', 'exists:modules,id'],
-            'endpoint_id' => ['nullable', 'integer', 'exists:endpoints,id'],
+            'system_id' => $catalogFilters ? ['sometimes', 'integer', 'exists:systems,id'] : ['prohibited'],
+            'module_id' => $catalogFilters ? ['nullable', 'integer', 'exists:modules,id'] : ['prohibited'],
+            'endpoint_id' => $catalogFilters ? ['nullable', 'integer', 'exists:endpoints,id'] : ['prohibited'],
             'q' => ['nullable', 'string', 'max:255'],
         ];
     }

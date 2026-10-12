@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\OrganizationSetting;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -19,7 +20,7 @@ it('renders portal branding from organization settings', function (): void {
         'secondary_color' => '#34d399',
     ]);
 
-    $response = $this->get('/');
+    $response = $this->actingAs(User::factory()->create())->get('/');
 
     $response->assertOk();
     $response->assertSee('Cafe Nova | AtlasHub', false);

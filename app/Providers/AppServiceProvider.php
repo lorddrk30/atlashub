@@ -2,10 +2,13 @@
 
 namespace App\Providers;
 
+use App\Auth\SecureUserProvider;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Rules\Password;
 use Opcodes\LogViewer\LogFile;
 use Opcodes\LogViewer\LogFolder;
 
@@ -24,6 +27,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Auth::provider('atlashub-users', fn ($app, array $config) => new SecureUserProvider($app['hash'], $config['model']));
+
+        Password::defaults(fn (): Password => Password::min(12)->mixedCase()->numbers()->symbols());
+
         Vite::prefetch(concurrency: 3);
 
         Gate::define('viewLogViewer', function (?User $user): bool {

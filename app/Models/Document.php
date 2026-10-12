@@ -23,7 +23,13 @@ class Document extends Model
         'mime_type',
         'size',
         'uploaded_by',
+        'is_public',
     ];
+
+    protected function casts(): array
+    {
+        return ['is_public' => 'boolean'];
+    }
 
     public function system(): BelongsTo
     {

@@ -10,10 +10,10 @@ use App\Models\System;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
-use Spatie\Permission\PermissionRegistrar;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,45 +21,15 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        app(PermissionRegistrar::class)->forgetCachedPermissions();
-
-        $permissionNames = [
-            'system.manage',
-            'module.manage',
-            'endpoint.manage',
-            'endpoint.publish',
-            'artefact.manage',
-            'document.view',
-            'document.manage',
-            'organization.manage',
-            'user.manage',
-            'role.manage',
-            'logs.view',
-            'logs.manage',
-        ];
-
-        foreach ($permissionNames as $permissionName) {
-            Permission::query()->firstOrCreate(['name' => $permissionName, 'guard_name' => 'web']);
+        if (app()->environment('production')) {
+            throw new \RuntimeException('Demo seeding is disabled in production. Provision users and roles securely.');
         }
 
-        $adminRole = Role::query()->firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
-        $editorRole = Role::query()->firstOrCreate(['name' => 'editor', 'guard_name' => 'web']);
-        $viewerRole = Role::query()->firstOrCreate(['name' => 'viewer', 'guard_name' => 'web']);
+        $this->call(AccessControlSeeder::class);
 
-        $adminRole->syncPermissions($permissionNames);
-        $editorRole->syncPermissions([
-            'system.manage',
-            'module.manage',
-            'endpoint.manage',
-            'endpoint.publish',
-            'artefact.manage',
-            'document.view',
-            'document.manage',
-            'logs.view',
-        ]);
-        $viewerRole->syncPermissions([
-            'document.view',
-        ]);
+        $adminRole = Role::findByName('admin', 'web');
+        $editorRole = Role::findByName('editor', 'web');
+        $viewerRole = Role::findByName('viewer', 'web');
 
         $admin = User::query()->firstOrCreate(
             ['email' => 'admin@rikarcoffe.local'],
@@ -401,5 +371,19 @@ class DatabaseSeeder extends Seeder
                 'updated_by' => $admin->id,
             ]
         );
+
+        // WithoutModelEvents suppresses Endpoint::creating; repair new and pre-existing demo rows.
+        DB::table('endpoints')
+            ->whereNull('public_id')
+            ->select('id')
+            ->orderBy('id')
+            ->chunkById(200, function ($endpoints): void {
+                foreach ($endpoints as $endpoint) {
+                    DB::table('endpoints')
+                        ->where('id', $endpoint->id)
+                        ->whereNull('public_id')
+                        ->update(['public_id' => (string) Str::ulid()]);
+                }
+            });
     }
 }

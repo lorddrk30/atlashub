@@ -9,6 +9,10 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
+beforeEach(function (): void {
+    $this->actingAs(User::factory()->create());
+});
+
 it('returns report summary with kpis, charts and tables', function (): void {
     $user = User::factory()->create();
     $system = System::factory()->create(['name' => 'Cafe Ops', 'slug' => 'cafe-ops']);

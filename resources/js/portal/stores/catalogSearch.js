@@ -4,6 +4,9 @@ import { defineStore } from 'pinia';
 export const useCatalogSearchStore = defineStore('catalogSearch', () => {
   const loading = ref(false);
   const initialized = ref(false);
+  const error = ref(false);
+  const filtersError = ref(false);
+  let latestSearch = 0;
 
   const filters = reactive({
     systems: [],
@@ -64,23 +67,35 @@ export const useCatalogSearchStore = defineStore('catalogSearch', () => {
   };
 
   const fetchFilters = async () => {
-    const response = await fetch('/api/v1/filters');
-    const data = await response.json();
+    filtersError.value = false;
 
-    filters.systems = data.systems || [];
-    filters.modules = data.modules || [];
-    filters.methods = data.methods || [];
-    filters.authentication_types = data.authentication_types || [];
-    filters.artefact_types = data.artefact_types || [];
-    filters.document_types = data.document_types || [];
+    try {
+      const response = await fetch('/api/v1/filters');
+      if (!response.ok) throw new Error('Could not load catalog filters');
+      const data = await response.json();
+
+      filters.systems = data.systems || [];
+      filters.modules = data.modules || [];
+      filters.methods = data.methods || [];
+      filters.authentication_types = data.authentication_types || [];
+      filters.artefact_types = data.artefact_types || [];
+      filters.document_types = data.document_types || [];
+    } catch {
+      filtersError.value = true;
+    }
   };
 
   const search = async () => {
+    const searchId = ++latestSearch;
     loading.value = true;
+    error.value = false;
 
     try {
       const response = await fetch(`/api/v1/search?${activeParams.value.toString()}`);
+      if (!response.ok) throw new Error('Could not search catalog');
       const data = await response.json();
+
+      if (searchId !== latestSearch) return;
 
       results.total = data.total || 0;
       results.counts = data.counts || {
@@ -97,7 +112,10 @@ export const useCatalogSearchStore = defineStore('catalogSearch', () => {
         artefacts: [],
         documents: [],
       };
+    } catch {
+      if (searchId === latestSearch) error.value = true;
     } finally {
+      if (searchId !== latestSearch) return;
       loading.value = false;
       initialized.value = true;
     }
@@ -106,6 +124,8 @@ export const useCatalogSearchStore = defineStore('catalogSearch', () => {
   return {
     loading,
     initialized,
+    error,
+    filtersError,
     filters,
     query,
     results,

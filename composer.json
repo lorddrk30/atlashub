@@ -1,9 +1,9 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "atlashub/atlashub",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "description": "Self-hosted system inventory, API catalog, and public/private PDF documentation portal.",
+    "keywords": ["atlashub", "system-inventory", "api-catalog", "technical-documentation", "laravel", "filament"],
     "license": "MIT",
     "require": {
         "php": "^8.2",

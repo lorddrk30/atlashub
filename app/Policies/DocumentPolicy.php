@@ -12,9 +12,9 @@ class DocumentPolicy
         return $user->can('document.view');
     }
 
-    public function view(User $user, Document $document): bool
+    public function view(?User $user, Document $document): bool
     {
-        return $user->can('document.view');
+        return $document->is_public || ($user?->can('document.view') ?? false);
     }
 
     public function create(User $user): bool

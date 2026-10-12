@@ -2,6 +2,8 @@
 
 Base URL: `/api/v1`
 
+`/search`, `/endpoints/{public_id}`, `/filters` y `/reports/*` requieren sesión o token Sanctum. Que un endpoint tenga estado `published` significa que aparece en el catálogo **interno**, no que pueda consultarse sin autenticación. Las únicas lecturas anónimas son los documentos PDF marcados expresamente como públicos. Consulta [las reglas de visibilidad](document-visibility.md).
+
 ## GET /search
 Busca en catalogo y devuelve resultados agrupados.
 
@@ -102,9 +104,10 @@ Devuelve catalogos para construir filtros de la UI.
 ## Documentos
 
 Accesos:
-- `GET /documents` y `GET /documents/{id}`: lectura publica de metadata para el portal.
-- `GET /documents/{id}/file`: requiere `auth:sanctum` + `document.view`.
-- `POST /documents` y `DELETE /documents/{id}`: requiere `auth:sanctum` + `document.manage`.
+- `GET /documents`: sin sesión lista solo PDF con `is_public=true`; con permiso `document.view` también incluye privados. La respuesta anónima no incluye relaciones con sistemas, rutas internas o datos del usuario que subió el archivo.
+- `GET /documents/{id}` y `GET /documents/{id}/file`: un PDF privado devuelve 404 al visitante; el público puede verse y descargarse sin cuenta. Los privados requieren permiso `document.view`.
+- `POST /documents` y `DELETE /documents/{id}`: requieren autenticación y permiso `document.manage`.
+- La visibilidad pública solo puede cambiarla un administrador desde el backoffice.
 
 ## POST /documents
 Sube un documento PDF asociado a un sistema.
@@ -117,30 +120,29 @@ Sube un documento PDF asociado a un sistema.
 - `description` (string, opcional)
 - `type` (enum: `manual|guia|procedimiento|diagrama|politica`)
 - `file` (archivo PDF, max 20MB)
+- `is_public` (booleano, opcional; `false` por defecto y solo configurable por admin)
 
 ### Response (201)
 ```json
 {
   "item": {
     "id": 10,
-    "system_id": 1,
-    "module_id": 3,
-    "endpoint_id": null,
     "title": "Manual de Usuario",
     "type": "manual",
+    "is_public": false,
     "view_url": "http://127.0.0.1:8000/documents/10/file",
     "download_url": "http://127.0.0.1:8000/documents/10/file?download=1"
   }
 }
 ```
 
-## GET /documents?system_id=
-Lista documentos por sistema (obligatorio), con filtros opcionales.
+## GET /documents
+Lista documentos con filtros opcionales. Los visitantes solo reciben los públicos y no pueden filtrar por identificadores del catálogo privado. La interfaz HTML para visitantes está en `/documentation`.
 
 ### Query params
-- `system_id` (int, requerido)
-- `module_id` (int, opcional)
-- `endpoint_id` (int, opcional)
+- `system_id` (int, opcional; requiere autenticación)
+- `module_id` (int, opcional; requiere autenticación)
+- `endpoint_id` (int, opcional; requiere autenticación)
 - `q` (string, opcional: busca en titulo/descripcion)
 
 ### Response (200)
@@ -156,13 +158,13 @@ Lista documentos por sistema (obligatorio), con filtros opcionales.
 ```
 
 ## GET /documents/{id}
-Devuelve metadata de un documento.
+Devuelve metadata del documento si es público o si la cuenta tiene permiso para verlo. Un documento privado devuelve 404 al visitante.
 
 ## GET /documents/{id}/file
-Entrega el PDF autenticado.
+Entrega un PDF público o un PDF privado autorizado. Los PDF se almacenan fuera de `public/`.
 - Inline por defecto (preview).
 - `?download=1` para descarga.
-- Nota UX: el portal usa las URLs `view_url/download_url` en ruta web (`/documents/{id}/file`) para evitar redirecciones no deseadas de `auth:sanctum`.
+- El portal web usa `/documents/{id}/file`; los clientes con token pueden usar `/api/v1/documents/{id}/file` enviando el mismo token.
 
 ## DELETE /documents/{id}
 Elimina metadata y archivo fisico del documento.

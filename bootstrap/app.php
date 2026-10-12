@@ -44,16 +44,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 503);
             }
 
-            $connection = (string) config('database.default', 'pgsql');
-            $connectionConfig = (array) config("database.connections.{$connection}", []);
-
             return response()->view('errors.database-unavailable', [
-                'databaseInfo' => [
-                    'connection' => $connection,
-                    'host' => (string) ($connectionConfig['host'] ?? 'n/a'),
-                    'port' => (string) ($connectionConfig['port'] ?? 'n/a'),
-                    'database' => (string) ($connectionConfig['database'] ?? 'n/a'),
-                ],
                 'timestamp' => now()->format('Y-m-d H:i:s'),
             ], 503);
         });
