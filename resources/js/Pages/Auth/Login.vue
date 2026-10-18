@@ -34,14 +34,14 @@ const submit = () => {
 
         <header class="mb-6 space-y-2">
             <h2 class="text-2xl font-semibold text-white">Iniciar sesión</h2>
-            <p class="text-sm text-slate-300">Usa la cuenta que te asignó un administrador. No hay registro público.</p>
+            <p class="text-sm text-slate-400">Usa la cuenta que te asignó un administrador.</p>
         </header>
 
         <div v-if="status" class="mb-4 rounded-xl border border-emerald-300/40 bg-emerald-300/15 px-3 py-2 text-sm font-medium text-emerald-100">
             {{ status }}
         </div>
 
-        <form class="space-y-4" @submit.prevent="submit">
+        <form class="space-y-5" @submit.prevent="submit">
             <div>
                 <InputLabel for="email" value="Correo" class="text-sm font-medium text-slate-200" />
 
@@ -84,11 +84,11 @@ const submit = () => {
                 </label>
             </div>
 
-            <div class="flex flex-col-reverse items-start justify-between gap-3 pt-2 sm:flex-row sm:items-center">
+            <div class="flex flex-col-reverse gap-5 pt-2">
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
-                    class="rounded-md text-sm text-slate-300 underline decoration-slate-500 underline-offset-4 transition hover:text-cyan-100 hover:decoration-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-300/30"
+                    class="self-center rounded-md text-xs text-slate-300 underline decoration-slate-500 underline-offset-4 transition hover:text-cyan-100 hover:decoration-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-300/30"
                 >
                     ¿Olvidaste tu contraseña?
                 </Link>
@@ -99,7 +99,7 @@ const submit = () => {
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
-                    Entrar
+                    {{ form.processing ? 'Ingresando…' : 'Entrar a la intranet' }}
                 </button>
             </div>
         </form>

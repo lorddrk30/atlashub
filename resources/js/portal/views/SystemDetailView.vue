@@ -15,11 +15,17 @@
     <p v-else-if="!system" class="border-t border-slate-800 py-8 text-sm text-slate-300">Este sistema no está disponible en el catálogo.</p>
 
     <template v-else>
-      <header class="border-b border-slate-800 pb-6">
+      <header class="system-detail-header border-b border-slate-800 pb-6">
         <h1 class="text-2xl font-semibold text-white md:text-3xl">{{ system.name }}</h1>
         <p v-if="system.description" class="mt-3 max-w-3xl text-sm leading-6 text-slate-300">{{ system.description }}</p>
+        <nav class="system-detail-nav" aria-label="Secciones del sistema">
+          <a href="#environments-heading">Información</a>
+          <a href="#endpoints-heading">Endpoints</a>
+          <a href="#documents-heading">Documentos</a>
+        </nav>
       </header>
 
+      <div class="system-overview">
       <section aria-labelledby="environments-heading" class="space-y-4">
         <h2 id="environments-heading" class="text-xl font-semibold text-white">Ambientes</h2>
         <dl v-if="environments.length" class="divide-y divide-slate-800 overflow-hidden rounded-md border border-slate-800">
@@ -43,6 +49,7 @@
         </dl>
       </section>
 
+      </div>
       <section aria-labelledby="endpoints-heading" class="space-y-4 border-t border-slate-800 pt-6">
         <h2 id="endpoints-heading" class="text-xl font-semibold text-white">Endpoints publicados</h2>
         <form role="search" aria-label="Buscar endpoints de este sistema" class="flex flex-col gap-3 sm:flex-row sm:items-end" @submit.prevent="applyEndpointFilters">

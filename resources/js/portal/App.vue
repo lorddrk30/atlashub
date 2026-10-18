@@ -1,42 +1,55 @@
 <template>
-  <div class="min-h-screen bg-slate-950 text-slate-100">
-    <div class="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
-      <header class="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
-        <router-link to="/" class="inline-flex items-center gap-3">
-          <span v-if="!organization.logo_url" class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-cyan-200/30 bg-cyan-200/10 text-xs font-semibold text-cyan-100">{{ organization.short_name }}</span>
-          <img v-else :src="organization.logo_url" :alt="`Logo ${organization.name}`" class="h-10 w-auto max-w-28 rounded-md border border-slate-700 bg-slate-900 object-contain px-2">
-          <div>
-            <p class="text-sm font-semibold text-slate-100">{{ organization.name }}</p>
-            <p class="text-sm text-slate-300">{{ organization.tagline }}</p>
-          </div>
+  <div class="atlas-shell">
+    <a href="#main-content" class="atlas-skip-link">Saltar al contenido</a>
+    <header class="atlas-header">
+      <div class="atlas-header-inner">
+        <router-link to="/" class="atlas-brand" aria-label="Ir al catálogo">
+          <span v-if="!organization.logo_url" class="atlas-brand-mark">{{ organization.short_name }}</span>
+          <img v-else :src="organization.logo_url" :alt="`Logo ${organization.name}`" class="atlas-brand-logo">
+          <span class="atlas-brand-copy">
+            <strong>{{ organization.name }}</strong>
+            <span>{{ organization.tagline }}</span>
+          </span>
         </router-link>
-        <div class="flex items-center gap-2">
-          <router-link
-            :to="{ name: 'reports-dashboard' }"
-            class="rounded-md border border-slate-700 bg-slate-900 px-4 py-2 text-xs text-slate-200 transition hover:border-cyan-300/50 hover:text-cyan-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/40"
-          >
-            Reportes
-          </router-link>
-          <a :href="organization.backoffice_url || '/backoffice'" class="rounded-md border border-slate-700 bg-slate-900 px-4 py-2 text-xs text-slate-200 transition hover:border-cyan-300/50 hover:text-cyan-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/40">Backoffice</a>
+        <div class="atlas-account-actions">
+          <a :href="organization.backoffice_url || '/backoffice'" class="atlas-button atlas-button-secondary">Administración</a>
           <form action="/logout" method="post">
             <input type="hidden" name="_token" :value="csrfToken">
-            <button type="submit" class="rounded-md border border-slate-700 bg-slate-900 px-4 py-2 text-xs text-slate-200 transition hover:border-cyan-300/50 hover:text-cyan-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/40">Salir</button>
+            <button type="submit" class="atlas-button atlas-button-quiet">Salir</button>
           </form>
         </div>
-      </header>
+      </div>
+      <nav class="atlas-navigation" aria-label="Navegación principal">
+        <router-link :to="{ name: 'home' }" :class="{ 'is-current': route.name !== 'reports-dashboard' }" :aria-current="route.name === 'home' ? 'page' : undefined">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Catálogo
+        </router-link>
+        <router-link :to="{ name: 'reports-dashboard' }" :class="{ 'is-current': route.name === 'reports-dashboard' }">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v16h16M8 16v-4m5 4V8m5 8V5"/></svg>
+          Reportes
+        </router-link>
+        <a href="/documentation">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h10l4 4v14H5zM14 3v5h5M8 12h8M8 16h6"/></svg>
+          <span class="atlas-label-full">Documentación pública</span><span class="atlas-label-short">Docs públicas</span>
+        </a>
+      </nav>
+    </header>
+    <div id="main-content" class="atlas-content" tabindex="-1">
       <router-view />
     </div>
+    <footer class="atlas-footer"><span>AtlasHub</span><span>Catálogo privado de tu organización</span></footer>
   </div>
 </template>
 
 <script setup>
 import { onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 
+const route = useRoute();
 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-
 const organization = window.__ATLASHUB_CONFIG__ || {
-  name: 'RikarCoffe',
-  short_name: 'RC',
+  name: 'AtlasHub',
+  short_name: 'AH',
   tagline: 'Portal de APIs internas',
   logo_url: null,
   backoffice_url: '/backoffice',

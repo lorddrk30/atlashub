@@ -1,26 +1,26 @@
 <template>
-  <main class="mx-auto max-w-5xl space-y-8 pb-8 md:pb-12">
-    <header>
+  <main class="mx-auto max-w-5xl space-y-6 pb-8 md:pb-12">
+    <header class="catalog-heading">
       <h1 class="text-2xl font-semibold text-white md:text-3xl">Catálogo de sistemas y APIs</h1>
       <p class="mt-2 text-sm text-slate-300">Busca sistemas, endpoints, documentos y artefactos internos.</p>
     </header>
 
     <form role="search" class="space-y-2" @submit.prevent="submit">
       <label for="q" class="block text-sm font-medium text-slate-200">Buscar en el catálogo</label>
-      <div class="flex flex-col gap-3 sm:flex-row">
+      <div class="catalog-search">
+        <svg class="atlas-search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg>
         <input
           id="q"
           ref="searchInput"
           v-model="store.query.q"
           type="search"
           placeholder="Nombre, ruta, documento o repositorio"
-          class="min-w-0 flex-1 rounded-md border border-slate-700 bg-slate-900 px-4 py-2.5 text-base text-white outline-none placeholder:text-slate-400 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/30"
         >
-        <button type="submit" class="rounded-md border border-cyan-300 bg-cyan-300 px-5 py-2.5 text-sm font-semibold text-slate-950 hover:bg-cyan-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/40">Buscar</button>
+        <button type="submit" class="atlas-button atlas-button-primary">Buscar</button>
       </div>
     </form>
 
-    <section class="border-t border-slate-800 pt-4" aria-label="Filtros de búsqueda">
+    <section aria-label="Filtros de búsqueda">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <button type="button" class="text-sm font-medium text-slate-200 hover:text-white" :aria-expanded="showFilters" aria-controls="catalog-filters" @click="showFilters = !showFilters">
           Filtros {{ showFilters ? '−' : '+' }}
@@ -88,68 +88,74 @@
       </template>
     </div>
 
-    <section v-for="section in visibleSections" :key="section.key" class="space-y-4">
-      <div class="flex items-center justify-between">
-        <h2 class="text-xl font-semibold text-white md:text-2xl">{{ section.label }}</h2>
-        <span class="rounded-md border border-cyan-300/30 bg-cyan-300/10 px-3 py-1 text-xs font-semibold text-cyan-100">{{ store.results.counts[section.key] || 0 }}</span>
+    <nav v-if="visibleSections.length > 1" class="catalog-section-nav" aria-label="Secciones del catálogo">
+      <a v-for="section in visibleSections" :key="section.key" :href="`#catalog-${section.key}`">{{ section.label }} <span>{{ store.results.counts[section.key] || 0 }}</span></a>
+    </nav>
+
+    <section v-for="section in visibleSections" :id="`catalog-${section.key}`" :key="section.key" class="catalog-section space-y-4">
+      <div class="catalog-section-title">
+        <h2 class="text-white">{{ section.label }}</h2>
+        <span>{{ store.results.counts[section.key] || 0 }}</span>
       </div>
 
-      <div class="grid gap-4 md:grid-cols-2" :class="section.key === 'systems' ? '' : 'lg:grid-cols-3'">
+      <div class="grid gap-4 md:grid-cols-2" :class="['systems', 'endpoints'].includes(section.key) ? '' : 'lg:grid-cols-3'">
         <article
           v-for="item in section.items"
           :key="section.key + '-' + (item.public_id || item.id)"
-          class="group relative overflow-hidden rounded-lg border border-slate-800 bg-slate-900 p-5 transition hover:border-cyan-300/35"
+          class="catalog-card"
         >
           <template v-if="section.key === 'systems'">
             <div class="flex items-start gap-3">
               <div class="min-w-0 flex-1">
-                <h3 class="text-lg font-semibold text-white">{{ item.name }}</h3>
+                <h3 class="font-semibold"><button class="catalog-system-title" @click="goToSystem(item.id)">{{ item.name }}</button></h3>
                 <p v-if="item.description" class="mt-2 text-sm text-slate-300">{{ shortText(item.description) }}</p>
               </div>
               <img
-                v-if="item.home_preview_url"
+                v-if="item.home_preview_url && !failedPreviews.has(item.id)"
                 :src="item.home_preview_url"
                 :alt="`Vista previa de ${item.name}`"
+                loading="lazy"
+                @error="failedPreviews.add(item.id)"
                 class="hidden h-16 w-24 shrink-0 rounded-md border border-slate-700 object-cover sm:block"
               >
             </div>
-            <dl class="mt-3 space-y-1 text-xs text-slate-300">
+            <dl class="catalog-system-meta">
               <div v-if="item.prod_server || item.prod_server_ip" class="flex gap-2"><dt class="w-20 shrink-0 text-slate-400">Producción</dt><dd class="min-w-0 break-words">{{ [item.prod_server, item.prod_server_ip].filter(Boolean).join(' · ') }}</dd></div>
               <div v-if="item.uat_server || item.uat_server_ip" class="flex gap-2"><dt class="w-20 shrink-0 text-slate-400">Pruebas</dt><dd class="min-w-0 break-words">{{ [item.uat_server, item.uat_server_ip].filter(Boolean).join(' · ') }}</dd></div>
               <div v-if="item.dev_server || item.dev_server_ip" class="flex gap-2"><dt class="w-20 shrink-0 text-slate-400">Desarrollo</dt><dd class="min-w-0 break-words">{{ [item.dev_server, item.dev_server_ip].filter(Boolean).join(' · ') }}</dd></div>
               <div v-if="item.responsibles?.length" class="flex gap-2"><dt class="w-20 shrink-0 text-slate-400">Responsables</dt><dd class="min-w-0 break-words">{{ joinTags(item.responsibles) }}</dd></div>
               <div v-if="item.user_areas?.length" class="flex gap-2"><dt class="w-20 shrink-0 text-slate-400">Áreas</dt><dd class="min-w-0 break-words">{{ joinTags(item.user_areas) }}</dd></div>
             </dl>
-            <div class="mt-3 flex flex-wrap gap-2">
-              <button v-if="item.internal_url" class="rounded-md border border-slate-700 bg-slate-950 px-2.5 py-1 text-[11px] text-slate-200 transition hover:border-cyan-300/50" @click="openUrl(item.internal_url)">Dominio interno</button>
-              <button v-if="item.public_url" class="rounded-md border border-slate-700 bg-slate-950 px-2.5 py-1 text-[11px] text-slate-200 transition hover:border-cyan-300/50" @click="openUrl(item.public_url)">Dominio público</button>
+            <div class="catalog-card-actions">
+              <button v-if="item.internal_url" @click="openUrl(item.internal_url)">Dominio interno</button>
+              <button v-if="item.public_url" @click="openUrl(item.public_url)">Dominio público</button>
               <button
                 v-if="item.repository_url || item.gitlab_url"
-                class="rounded-md border border-slate-700 bg-slate-950 px-2.5 py-1 text-[11px] text-slate-200 transition hover:border-cyan-300/50"
                 @click="openUrl(item.repository_url || item.gitlab_url)"
               >
                 Repositorio
               </button>
-              <button class="rounded-md border border-cyan-300/40 bg-cyan-300/10 px-2.5 py-1 text-[11px] text-cyan-100 transition hover:border-cyan-300/70" @click="goToSystem(item.id)">
-                Ver sistema
+              <button class="catalog-open" @click="goToSystem(item.id)">
+                Ver sistema <span aria-hidden="true">→</span>
               </button>
             </div>
           </template>
 
           <template v-else-if="section.key === 'modules'">
-            <p class="text-xs text-cyan-100">Modulo</p>
+            <p class="text-xs text-slate-400">Módulo</p>
             <h3 class="mt-2 text-lg font-semibold text-white">{{ item.name }}</h3>
             <p class="mt-3 text-sm text-slate-300">{{ shortText(item.description) }}</p>
             <p class="mt-3 text-xs text-slate-400">{{ item.system?.name || 'Sistema sin definir' }}</p>
           </template>
 
           <template v-else-if="section.key === 'endpoints'">
-            <p class="text-xs text-cyan-100">Endpoint</p>
-            <h3 class="mt-2 text-lg font-semibold text-white">{{ item.name }}</h3>
-            <p class="mt-3 text-sm text-slate-300"><span class="rounded-md border border-cyan-300/30 bg-cyan-300/10 px-2 py-0.5 text-[11px] font-semibold text-cyan-100">{{ item.method }}</span></p>
-            <p class="mt-2 text-sm text-slate-300">{{ shortText(item.path, 62) }}</p>
-            <button v-if="item.public_id" class="mt-4 rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-xs text-white transition hover:border-cyan-300/50" @click="goToEndpoint(item.public_id)">Abrir mini swagger</button>
-            <p v-else class="mt-4 text-xs text-slate-400">Detalle no disponible</p>
+            <button v-if="item.public_id" class="catalog-endpoint-row" @click="goToEndpoint(item.public_id)">
+              <span class="http-method">{{ item.method }}</span>
+              <span class="endpoint-copy"><span class="text-sm font-medium text-white">{{ item.name }}</span><code>{{ item.path }}</code></span>
+              <span class="endpoint-arrow" aria-hidden="true">↗</span>
+            </button>
+            <div v-else class="catalog-endpoint-row"><span class="http-method">{{ item.method }}</span><span class="endpoint-copy"><span class="text-sm text-white">{{ item.name }}</span><code>{{ item.path }}</code></span></div>
+            <p v-if="!item.public_id" class="mt-4 text-xs text-slate-400">Detalle no disponible</p>
           </template>
 
           <template v-else-if="section.key === 'documents'">
@@ -180,6 +186,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useCatalogSearchStore } from '../stores/catalogSearch';
 
 const searchInput = ref(null);
+const failedPreviews = ref(new Set());
 const showFilters = ref(false);
 const route = useRoute();
 const router = useRouter();
